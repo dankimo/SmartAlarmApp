@@ -6,12 +6,15 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -75,6 +78,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         supportActionBar!!.setDisplayShowTitleEnabled(false);
         supportActionBar!!.setDisplayHomeAsUpEnabled(true);
 
+        binding.toolbar.overflowIcon?.setTint(ContextCompat.getColor(this, R.color.white))
+
         setContentView(binding.root)
 
         val host: NavHostFragment = supportFragmentManager
@@ -86,6 +91,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             setOf(R.id.fragment_home)) //  IDs of fragments you want without the ActionBar home/up button
 
         setupActionBarWithNavController(navController, appBarConfiguration)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar, menu)
+
+        return true
     }
 
     // todo: make home fragment read times from stored file/db instead of just passing values
@@ -146,6 +157,30 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
     }
 
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.reset_alarms -> {
+                // delete time settings for testing alarm, should just add reset button for this
+                val sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+                val spEditor = sp.edit()
+                spEditor.clear()
+                spEditor.apply()
+
+                val setInitialIntent = Intent(this, ActivitySetInitial::class.java)
+                startActivity(setInitialIntent)
+
+                return true
+            }
+            R.id.reset_records -> {
+                return true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragment_home)
         return navController.navigateUp() || super.onSupportNavigateUp()
@@ -182,18 +217,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
 
         alarmManager.cancel(pendingIntent)
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = "smartAlarmChannel"
-            val description = "Channel for Smart Alarm app"
-            val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT)
-            notificationChannel.description = description
-
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(notificationChannel)
-        }
     }
 }
 

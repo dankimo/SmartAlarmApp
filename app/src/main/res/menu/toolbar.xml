@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/options_menu"
+    android:title="Reset">
+
+    <item
+        android:id="@+id/reset_alarms"
+        android:title="Reset Alarms" />
+    <item
+        android:id="@+id/reset_records"
+        android:title="Reset Records" />
+
+</menu>

@@ -29,6 +29,8 @@ class ActivitySetGoal : AppCompatActivity() {
     }
 
     private fun saveData() {
+        DB_HELPER = DataBaseHelper(this)
+
         val sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
         val spEditor = sp.edit()
 
