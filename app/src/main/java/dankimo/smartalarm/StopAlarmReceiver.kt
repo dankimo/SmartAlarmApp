@@ -11,7 +11,9 @@ class StopAlarmReceiver : BroadcastReceiver(){
         stopAlarmSound(context)
     }
 
-    fun stopAlarmSound(context: Context?) {
-        if (ringTone != null) ringTone!!.stop()
+    companion object {
+        fun stopAlarmSound(context: Context?) {
+            if (ringTone != null) ringTone!!.stop()
+        }
     }
 }

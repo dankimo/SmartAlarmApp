@@ -186,6 +186,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        StopAlarmReceiver.stopAlarmSound(this)
+    }
+
     private fun loadData() : HashMap<String, Int>? {
         val sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
@@ -205,10 +211,21 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private fun startAlarm(c : Calendar) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
+        var intent = Intent(this, AlarmReceiver::class.java)
+        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+
+        val newalarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        var newintent = Intent(this, NotificationReceiver::class.java)
+        var newpendingIntent = PendingIntent.getBroadcast(this, 2, newintent, 0)
+
+        var newc = c
+        newc.add(Calendar.SECOND, 5)
+        newalarmManager.setExact(AlarmManager.RTC, newc.timeInMillis, newpendingIntent)
+
+        saveAlarmsToDB()
     }
 
     private fun cancelAlarm() {
@@ -218,5 +235,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
         alarmManager.cancel(pendingIntent)
     }
+
+    private
 }
 

@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter
 val TABLE_NAME = "AlarmTable"
 val COLUMN_TIMESET = "Time_Set"
 val COLUMN_TIMESTOPPED = "Time_Stopped"
+val COLUMN_ALARMTYPE = "Alarm_Type"
 var DB_HELPER : DataBaseHelper? = null
 
 class DataBaseHelper(
@@ -26,7 +27,8 @@ class DataBaseHelper(
         val createTableStatement = "CREATE TABLE $TABLE_NAME " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_TIMESET TEXT," +
-                "$COLUMN_TIMESTOPPED TEXT)"
+                "$COLUMN_TIMESTOPPED TEXT," +
+                "$COLUMN_ALARMTYPE TEXT)"
 
         db?.execSQL(createTableStatement)
     }
@@ -42,6 +44,7 @@ class DataBaseHelper(
 
         cv.put(COLUMN_TIMESET, time.timeSet_toString())
         cv.put(COLUMN_TIMESTOPPED, time.timeStopped_toString())
+        cv.put(COLUMN_ALARMTYPE, time.alarmType)
 
         val insert = db.insert(TABLE_NAME, null, cv)
         return insert != Integer.toUnsignedLong(-1)
@@ -61,9 +64,10 @@ class DataBaseHelper(
                 val alarmID = cursor.getInt(0)
                 val timeSet = convertFromStringToDate(cursor.getString(1))
                 val timeStopped = convertFromStringToDate(cursor.getString(2))
+                val alarmType = cursor.getString(3)
 
 
-                val alarmTimeModel = AlarmTimeModel(alarmID, timeSet, timeStopped)
+                val alarmTimeModel = AlarmTimeModel(alarmID, timeSet, timeStopped, alarmType)
                 returnList.add(alarmTimeModel)
 
             } while (cursor.moveToNext())

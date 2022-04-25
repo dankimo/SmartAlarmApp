@@ -10,12 +10,14 @@ val dateStringPattern = "yyyy-MM-dd hh:mm:ss;"
 
 class AlarmTimeModel(
     Id: Int,
-    TimeSet: LocalDateTime,
-    TimeStopped: LocalDateTime,
+    TimeSet: Calendar,
+    TimeStopped: Calendar,
+    AlarmType : String
 ){
     val id : Int = Id
-    val timeSet : LocalDateTime = TimeSet
-    val timeStopped : LocalDateTime = TimeStopped
+    val timeSet : Calendar = TimeSet
+    val timeStopped : Calendar = TimeStopped
+    val alarmType : String = AlarmType
 
     private val formatter = SimpleDateFormat(dateStringPattern);
 

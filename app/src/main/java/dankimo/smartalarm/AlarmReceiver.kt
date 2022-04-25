@@ -18,9 +18,6 @@ import android.content.Intent.getIntent
 
 import android.os.Bundle
 
-
-
-
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         var stopAlarmIntent =
@@ -48,6 +45,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
     fun playAlarmSound(context: Context?) {
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+
+        Toast.makeText(context, "PLAYING ALARM SOUND", Toast.LENGTH_LONG).show()
         ringTone = RingtoneManager.getRingtone(context, alarmSound);
         ringTone!!.play();
     }
