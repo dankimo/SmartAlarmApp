@@ -77,6 +77,13 @@ class DataBaseHelper(
         return returnList
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addCollection(alarms: List<AlarmTimeModel>) {
+        alarms.forEach { alarm ->
+            addOne(alarm)
+        }
+    }
+
     companion object {
         @RequiresApi(Build.VERSION_CODES.O)
         fun convertFromStringToDate(date : String) : LocalDateTime {

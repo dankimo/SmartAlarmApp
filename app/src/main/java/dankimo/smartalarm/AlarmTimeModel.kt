@@ -9,15 +9,13 @@ import java.util.*
 val dateStringPattern = "yyyy-MM-dd hh:mm:ss;"
 
 class AlarmTimeModel(
-    Id: Int,
-    TimeSet: Calendar,
-    TimeStopped: Calendar,
-    AlarmType : String
+    Id: Int? = null,
+    TimeSet: LocalDateTime,
+    TimeStopped: LocalDateTime? = null,
 ){
-    val id : Int = Id
-    val timeSet : Calendar = TimeSet
-    val timeStopped : Calendar = TimeStopped
-    val alarmType : String = AlarmType
+    val id : Int? = Id
+    val timeSet : LocalDateTime = TimeSet
+    val timeStopped : LocalDateTime? = TimeStopped
 
     private val formatter = SimpleDateFormat(dateStringPattern);
 

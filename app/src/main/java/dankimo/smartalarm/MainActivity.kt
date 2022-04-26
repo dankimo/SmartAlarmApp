@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
@@ -26,6 +27,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationBarView
 import dankimo.smartalarm.databinding.ActivityMainBinding
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -189,6 +191,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     override fun onStop() {
         super.onStop()
 
+        cancelAlarm()
         StopAlarmReceiver.stopAlarmSound(this)
     }
 
@@ -209,23 +212,20 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         "goalMinute" to sp.getInt("goalMinute", 0))
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun startAlarm(c : Calendar) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         var intent = Intent(this, AlarmReceiver::class.java)
         var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+        saveAlarmToDB(c)
 
-        val newalarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        intent = Intent(this, NotificationReceiver::class.java)
+        pendingIntent = PendingIntent.getBroadcast(this, 2, intent, 0)
+        c.add(Calendar.SECOND, 5)
 
-        var newintent = Intent(this, NotificationReceiver::class.java)
-        var newpendingIntent = PendingIntent.getBroadcast(this, 2, newintent, 0)
-
-        var newc = c
-        newc.add(Calendar.SECOND, 5)
-        newalarmManager.setExact(AlarmManager.RTC, newc.timeInMillis, newpendingIntent)
-
-        saveAlarmsToDB()
+        alarmManager.setExact(AlarmManager.RTC, c.timeInMillis, pendingIntent)
     }
 
     private fun cancelAlarm() {
@@ -236,6 +236,25 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         alarmManager.cancel(pendingIntent)
     }
 
-    private
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun saveAlarmToDB(alarmTime : Calendar) {
+        val dbh = DataBaseHelper(this)
+
+        val alarmModel = AlarmTimeModel(null, calendarToLocalDateTime(alarmTime), null)
+        dbh.addOne(alarmModel)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun calendarToLocalDateTime(calendar: Calendar) : LocalDateTime{
+        // Getting the timezone
+        val tz = calendar.timeZone
+
+        // Getting zone id
+        val zoneID = tz.toZoneId()
+
+        // conversion
+        val localDateTime = LocalDateTime.ofInstant(calendar.toInstant(), zoneID)
+        return localDateTime
+    }
 }
 
