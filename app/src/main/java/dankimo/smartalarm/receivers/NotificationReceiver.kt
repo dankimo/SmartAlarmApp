@@ -1,4 +1,4 @@
-package dankimo.smartalarm
+package dankimo.smartalarm.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -6,6 +6,8 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import dankimo.smartalarm.NOTIFICATION_CHANNEL_ID
+import dankimo.smartalarm.R
 
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {

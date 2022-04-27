@@ -1,32 +1,27 @@
 package dankimo.smartalarm
 
 import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationBarView
 import dankimo.smartalarm.databinding.ActivityMainBinding
+import dankimo.smartalarm.receivers.AlarmReceiver
+import dankimo.smartalarm.receivers.NotificationReceiver
+import dankimo.smartalarm.receivers.StopAlarmReceiver
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
@@ -44,6 +39,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     private lateinit var alarmIntent: PendingIntent
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -230,8 +226,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private fun cancelAlarm() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
+        var intent = Intent(this, AlarmReceiver::class.java)
+        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
+
+        alarmManager.cancel(pendingIntent)
+
+        intent = Intent(this, NotificationReceiver::class.java)
+        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
 
         alarmManager.cancel(pendingIntent)
     }
@@ -241,7 +242,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         val dbh = DataBaseHelper(this)
 
         val alarmModel = AlarmTimeModel(null, calendarToLocalDateTime(alarmTime), null)
-        dbh.addOne(alarmModel)
+        dbh.addAlarmTime(alarmModel)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

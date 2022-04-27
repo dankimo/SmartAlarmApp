@@ -1,10 +1,9 @@
-package dankimo.smartalarm
+package dankimo.smartalarm.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
-import android.widget.Toast
+import dankimo.smartalarm.ringTone
 
 class StopAlarmReceiver : BroadcastReceiver(){
     override fun onReceive(context: Context?, intent: Intent?) {

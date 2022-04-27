@@ -9,11 +9,15 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import dankimo.smartalarm.models.AlarmTimeModel
+import dankimo.smartalarm.models.NotificationTimeModel
+import dankimo.smartalarm.models.dateStringPattern
 
-val TABLE_NAME = "AlarmTable"
+val ALARM_TABLE_NAME = "AlarmTimes"
+val NOTIFICATION_TABLE_NAME = "NotificationTimes"
 val COLUMN_TIMESET = "Time_Set"
 val COLUMN_TIMESTOPPED = "Time_Stopped"
-val COLUMN_ALARMTYPE = "Alarm_Type"
+val COLUMN_ALARMID = "Alarm_Id"
 var DB_HELPER : DataBaseHelper? = null
 
 class DataBaseHelper(
@@ -24,13 +28,19 @@ class DataBaseHelper(
 ) : SQLiteOpenHelper(context, name, factory, version) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val createTableStatement = "CREATE TABLE $TABLE_NAME " +
+        val createAlarmTableStatement = "CREATE TABLE $ALARM_TABLE_NAME " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_TIMESET TEXT," +
-                "$COLUMN_TIMESTOPPED TEXT," +
-                "$COLUMN_ALARMTYPE TEXT)"
+                "$COLUMN_TIMESTOPPED TEXT);"
 
-        db?.execSQL(createTableStatement)
+        val createNotificationTableStatement = "CREATE TABLE $NOTIFICATION_TABLE_NAME " +
+                "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "$COLUMN_TIMESTOPPED TEXT," +
+                "$COLUMN_ALARMID INTEGER," +
+                "FOREIGN KEY ($COLUMN_ALARMID) REFERENCES $ALARM_TABLE_NAME(ID));"
+
+        db?.execSQL(createAlarmTableStatement)
+        db?.execSQL(createNotificationTableStatement)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -38,23 +48,21 @@ class DataBaseHelper(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addOne(time: AlarmTimeModel) : Boolean {
+    fun addAlarmTime(time: AlarmTimeModel) : Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
 
         cv.put(COLUMN_TIMESET, time.timeSet_toString())
-        cv.put(COLUMN_TIMESTOPPED, time.timeStopped_toString())
-        cv.put(COLUMN_ALARMTYPE, time.alarmType)
 
-        val insert = db.insert(TABLE_NAME, null, cv)
+        val insert = db.insert(ALARM_TABLE_NAME, null, cv)
         return insert != Integer.toUnsignedLong(-1)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getAll() : MutableList<AlarmTimeModel> {
+    fun getAll() : List<AlarmTimeModel> {
         var returnList: MutableList<AlarmTimeModel> = mutableListOf()
 
-        val query = "SELECT * FROM $TABLE_NAME"
+        val query = "SELECT * FROM $ALARM_TABLE_NAME"
         val db = this.readableDatabase
 
         val cursor: Cursor = db.rawQuery(query, null)
@@ -67,7 +75,7 @@ class DataBaseHelper(
                 val alarmType = cursor.getString(3)
 
 
-                val alarmTimeModel = AlarmTimeModel(alarmID, timeSet, timeStopped, alarmType)
+                val alarmTimeModel = AlarmTimeModel(alarmID, timeSet)
                 returnList.add(alarmTimeModel)
 
             } while (cursor.moveToNext())
@@ -78,10 +86,25 @@ class DataBaseHelper(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    fun addStoppedTime(timeStopped : NotificationTimeModel) : Boolean {
+        val db = this.writableDatabase
+        val cv = ContentValues()
+
+        cv.put(COLUMN_TIMESTOPPED, timeStopped.timeStopped_toString())
+
+        val insert = db.insert(ALARM_TABLE_NAME, null, cv)
+        return insert != Integer.toUnsignedLong(-1)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun addCollection(alarms: List<AlarmTimeModel>) {
         alarms.forEach { alarm ->
-            addOne(alarm)
+            addAlarmTime(alarm)
         }
+    }
+
+    fun updateAlarmStoppedColumn(alarm : AlarmTimeModel) {
+
     }
 
     companion object {
