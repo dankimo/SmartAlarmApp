@@ -15,6 +15,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import dankimo.smartalarm.databinding.FragmentStatsBinding
+import dankimo.smartalarm.models.AlarmTimeModel
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -22,8 +23,8 @@ import kotlin.collections.ArrayList
 
 class StatsFragment : Fragment() {
     private lateinit var binding: FragmentStatsBinding
-    private val timesSet : MutableList<LocalDateTime>? = null
-    private val timesStopped : MutableList<LocalDateTime>? = null
+    private var timesSet : List<AlarmTimeModel>? = null
+    private var timesStopped : List<AlarmTimeModel>? = null
     private var timesSetDataSet : LineDataSet? = null
     private var timesStoppedDataSet : LineDataSet? = null
     private var goalTimeDataSet : LineDataSet? = null
@@ -67,6 +68,16 @@ class StatsFragment : Fragment() {
 
     }
 
+    // get the alarm time data from the db
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getData() {
+        val dbh = DataBaseHelper(context)
+
+        timesSet = dbh.getAll(ALARM_TABLE_NAME)
+        timesStopped = dbh.getAll(NOTIFICATION_TABLE_NAME)
+    }
+
+    // create the dataset objects for the chart from the alarm time entries
     @RequiresApi(Build.VERSION_CODES.O)
     fun createDataSets()
     {
@@ -100,6 +111,7 @@ class StatsFragment : Fragment() {
         return goalTimeData
     }
 
+    // map an individual list of times to a dataset object
     @RequiresApi(Build.VERSION_CODES.O)
     fun createTimeDataSet(times : List<LocalDateTime>) : List<Entry> {
         val output = times.map { entry ->
@@ -110,6 +122,7 @@ class StatsFragment : Fragment() {
         return output
     }
 
+    // convert a day/month/year to a float e.g. 12/01/2022 = 12012022
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertDateToFloat(date: LocalDateTime) : Float {
         val day = date.dayOfMonth * 1000000;
@@ -119,6 +132,7 @@ class StatsFragment : Fragment() {
         return (day + month + year) as Float
     }
 
+    // convert an hour/minute value to a float e.g. 07:53 = 0753
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertTimeToFloat(date: LocalDateTime) : Float {
         val hour = date.hour * 100

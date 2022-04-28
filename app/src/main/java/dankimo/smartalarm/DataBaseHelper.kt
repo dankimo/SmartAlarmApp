@@ -59,10 +59,10 @@ class DataBaseHelper(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getAll() : List<AlarmTimeModel> {
+    fun getAll(tableName : String) : List<AlarmTimeModel> {
         var returnList: MutableList<AlarmTimeModel> = mutableListOf()
 
-        val query = "SELECT * FROM $ALARM_TABLE_NAME"
+        val query = "SELECT * FROM $tableName"
         val db = this.readableDatabase
 
         val cursor: Cursor = db.rawQuery(query, null)
@@ -71,9 +71,6 @@ class DataBaseHelper(
             do {
                 val alarmID = cursor.getInt(0)
                 val timeSet = convertFromStringToDate(cursor.getString(1))
-                val timeStopped = convertFromStringToDate(cursor.getString(2))
-                val alarmType = cursor.getString(3)
-
 
                 val alarmTimeModel = AlarmTimeModel(alarmID, timeSet)
                 returnList.add(alarmTimeModel)
@@ -92,7 +89,7 @@ class DataBaseHelper(
 
         cv.put(COLUMN_TIMESTOPPED, timeStopped.timeStopped_toString())
 
-        val insert = db.insert(ALARM_TABLE_NAME, null, cv)
+        val insert = db.insert(NOTIFICATION_TABLE_NAME, null, cv)
         return insert != Integer.toUnsignedLong(-1)
     }
 
@@ -101,10 +98,6 @@ class DataBaseHelper(
         alarms.forEach { alarm ->
             addAlarmTime(alarm)
         }
-    }
-
-    fun updateAlarmStoppedColumn(alarm : AlarmTimeModel) {
-
     }
 
     companion object {

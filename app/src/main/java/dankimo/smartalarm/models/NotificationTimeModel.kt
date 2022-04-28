@@ -7,12 +7,11 @@ import java.time.LocalDateTime
 
 class NotificationTimeModel(
     Id: Int? = null,
-    TimeStopped: LocalDateTime? = null,
-){
-    val id : Int? = Id
-    val timeStopped : LocalDateTime? = TimeStopped
-
-    private val formatter = SimpleDateFormat(dateStringPattern)
+    TimeStopped: LocalDateTime,
+    AlarmID : Int
+) : AlarmTimeModel (Id, TimeStopped) {
+    var alarmId : Int = AlarmID
+    var timeStopped : LocalDateTime = TimeStopped
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun timeStopped_toString() : String {

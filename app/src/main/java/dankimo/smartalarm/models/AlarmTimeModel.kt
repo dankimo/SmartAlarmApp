@@ -8,14 +8,14 @@ import java.util.*
 
 val dateStringPattern = "yyyy-MM-dd hh:mm:ss;"
 
-class AlarmTimeModel(
+open class AlarmTimeModel(
     Id: Int? = null,
     TimeSet: LocalDateTime,
-){
+) {
     val id : Int? = Id
     val timeSet : LocalDateTime = TimeSet
 
-    private val formatter = SimpleDateFormat(dateStringPattern)
+    protected val formatter = SimpleDateFormat(dateStringPattern)
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun timeSet_toString() : String{
