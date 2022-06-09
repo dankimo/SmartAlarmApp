@@ -28,12 +28,12 @@ class DataBaseHelper(
 ) : SQLiteOpenHelper(context, name, factory, version) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val createAlarmTableStatement = "CREATE TABLE $ALARM_TABLE_NAME " +
+        val createAlarmTableStatement = "CREATE TABLE IF NOT EXISTS $ALARM_TABLE_NAME " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_TIMESET TEXT," +
                 "$COLUMN_TIMESTOPPED TEXT);"
 
-        val createNotificationTableStatement = "CREATE TABLE $NOTIFICATION_TABLE_NAME " +
+        val createNotificationTableStatement = "CREATE TABLE IF NOT EXISTS $NOTIFICATION_TABLE_NAME " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$COLUMN_TIMESTOPPED TEXT," +
                 "$COLUMN_ALARMID INTEGER," +
