@@ -10,21 +10,17 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.github.mikephil.charting.data.DataSet
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import dankimo.smartalarm.databinding.FragmentStatsBinding
-import dankimo.smartalarm.models.AlarmTimeModel
-import java.time.LocalDate
+import dankimo.smartalarm.models.Alarm
 import java.time.LocalDateTime
-import java.util.*
-import kotlin.collections.ArrayList
 
 class StatsFragment : Fragment() {
     private lateinit var binding: FragmentStatsBinding
-    private var timesSet : List<AlarmTimeModel>? = null
-    private var timesStopped : List<AlarmTimeModel>? = null
+    private var timesSet : List<Alarm>? = null
+    private var timesStopped : List<Alarm>? = null
     private var timesSetDataSet : LineDataSet? = null
     private var timesStoppedDataSet : LineDataSet? = null
     private var goalTimeDataSet : LineDataSet? = null
@@ -71,7 +67,7 @@ class StatsFragment : Fragment() {
     // get the alarm time data from the db
     @RequiresApi(Build.VERSION_CODES.O)
     fun getData() {
-        val dbh = DataBaseHelper(context)
+        val dbh = DatabaseHelper(context)
 
         timesSet = dbh.getAll(ALARM_TABLE_NAME)
         timesStopped = dbh.getAll(NOTIFICATION_TABLE_NAME)
@@ -85,10 +81,10 @@ class StatsFragment : Fragment() {
         val goalTimeEntries : List<Entry>? = createGoalTimeEntries()
         // Create Times Set Data Set
         val timesSetEntries : List<Entry>? = createTimeDataSet(
-            timesSet as List<LocalDateTime>)
+            timesSet as List<Alarm>)
         // Create Times Stopped Data Set
         val timesStoppedEntries : List<Entry>? = createTimeDataSet(
-            timesStopped as List<LocalDateTime>)
+            timesStopped as List<Alarm>)
 
         timesSetDataSet = LineDataSet(timesSetEntries, "Time Set")
         timesStoppedDataSet = LineDataSet(timesStoppedEntries, "Time Stopped")
@@ -104,7 +100,7 @@ class StatsFragment : Fragment() {
         // get the range of dates alarms have been set for
         // then map the goal time for each date
         val goalTimeData = timesSet?.map { entry ->
-            val date = convertDateToFloat(entry)
+            val date = convertDateToFloat(entry.time)
             Entry(date, (goalHour!! * 100 + goalMinute!!) as Float)
         }
 
@@ -113,10 +109,10 @@ class StatsFragment : Fragment() {
 
     // map an individual list of times to a dataset object
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createTimeDataSet(times : List<LocalDateTime>) : List<Entry> {
+    fun createTimeDataSet(times : List<Alarm>) : List<Entry> {
         val output = times.map { entry ->
-            val date = convertDateToFloat(entry)
-            val time = convertTimeToFloat(entry)
+            val date = convertDateToFloat(entry.time)
+            val time = convertTimeToFloat(entry.time)
             Entry(date, time)
         }
         return output

@@ -13,12 +13,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.navigation.NavigationBarView
 import dankimo.smartalarm.databinding.ActivityMainBinding
+import dankimo.smartalarm.models.Alarm
 import dankimo.smartalarm.receivers.AlarmReceiver
 import dankimo.smartalarm.receivers.NotificationReceiver
 import dankimo.smartalarm.receivers.StopAlarmReceiver
@@ -37,6 +39,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private var alarmMgr: AlarmManager? = null
     private lateinit var alarmIntent: PendingIntent
+    private lateinit var navController: NavController
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -61,7 +64,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 set(Calendar.MINUTE, times!!["currentMinute"]!!)
                 set(Calendar.SECOND, 0)
             }
-            startAlarm(calendar)
+
+            if (intent.getBooleanExtra("setNewAlarm", false)) {
+                startAlarm(calendar)
+            }
 
             supportFragmentManager.commit {
                 replace(R.id.frame_content, newHomeInstance(times!!))
@@ -83,7 +89,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.frame_content) as NavHostFragment? ?: return
 
-        val navController = host.navController
+        navController = host.navController
 
         appBarConfiguration = AppBarConfiguration(
             setOf(R.id.fragment_home)) //  IDs of fragments you want without the ActionBar home/up button
@@ -108,13 +114,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 //        when (item.itemId) {
-//            R.id.reset_running -> {
+//            R.Id.reset_running -> {
 //
 //            }
-//            R.id.reset_cycling -> {
+//            R.Id.reset_cycling -> {
 //
 //            }
-//            R.id.reset_all -> {
+//            R.Id.reset_all -> {
 //
 //            }
 //            else -> {
@@ -124,10 +130,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 //    }
 
     private fun onHomeClicked() : Boolean {
-        supportFragmentManager.commit {
-            replace(R.id.frame_content, newHomeInstance(times!!))
-        }
-        return true
+        HomeFragmentDirections()
     }
 
     private fun onStatsClicked() : Boolean {
@@ -208,6 +211,19 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         "goalMinute" to sp.getInt("goalMinute", 0))
     }
 
+    private fun cancelAlarm() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        var intent = Intent(this, AlarmReceiver::class.java)
+        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
+
+        alarmManager.cancel(pendingIntent)
+
+        intent = Intent(this, NotificationReceiver::class.java)
+        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
+
+        alarmManager.cancel(pendingIntent)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startAlarm(c : Calendar) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -224,24 +240,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         alarmManager.setExact(AlarmManager.RTC, c.timeInMillis, pendingIntent)
     }
 
-    private fun cancelAlarm() {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        var intent = Intent(this, AlarmReceiver::class.java)
-        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
-
-        alarmManager.cancel(pendingIntent)
-
-        intent = Intent(this, NotificationReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
-
-        alarmManager.cancel(pendingIntent)
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveAlarmToDB(alarmTime : Calendar) {
-        val dbh = DataBaseHelper(this)
+        val dbh = DatabaseHelper(this)
 
-        val alarmModel = AlarmTimeModel(null, calendarToLocalDateTime(alarmTime), null)
+        val alarmModel = Alarm(null, calendarToLocalDateTime(alarmTime))
         dbh.addAlarmTime(alarmModel)
     }
 
@@ -250,7 +253,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         // Getting the timezone
         val tz = calendar.timeZone
 
-        // Getting zone id
+        // Getting zone Id
         val zoneID = tz.toZoneId()
 
         // conversion

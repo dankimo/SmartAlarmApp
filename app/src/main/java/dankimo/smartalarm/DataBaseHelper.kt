@@ -7,10 +7,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import androidx.annotation.RequiresApi
+import dankimo.smartalarm.models.Alarm
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import dankimo.smartalarm.models.AlarmTimeModel
-import dankimo.smartalarm.models.NotificationTimeModel
 import dankimo.smartalarm.models.dateStringPattern
 
 val ALARM_TABLE_NAME = "AlarmTimes"
@@ -18,9 +17,9 @@ val NOTIFICATION_TABLE_NAME = "NotificationTimes"
 val COLUMN_TIMESET = "Time_Set"
 val COLUMN_TIMESTOPPED = "Time_Stopped"
 val COLUMN_ALARMID = "Alarm_Id"
-var DB_HELPER : DataBaseHelper? = null
+var DB_HELPER : DatabaseHelper? = null
 
-class DataBaseHelper(
+class DatabaseHelper(
     context: Context?,
     name: String? = "smartalarm.db",
     factory: SQLiteDatabase.CursorFactory? = null,
@@ -48,19 +47,19 @@ class DataBaseHelper(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addAlarmTime(time: AlarmTimeModel) : Boolean {
+    fun addAlarmTime(time: Alarm) : Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
 
-        cv.put(COLUMN_TIMESET, time.timeSet_toString())
+        cv.put(COLUMN_TIMESET, time.time_toString())
 
         val insert = db.insert(ALARM_TABLE_NAME, null, cv)
         return insert != Integer.toUnsignedLong(-1)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getAll(tableName : String) : List<AlarmTimeModel> {
-        var returnList: MutableList<AlarmTimeModel> = mutableListOf()
+    fun getAll(tableName : String) : List<Alarm> {
+        var returnList: MutableList<Alarm> = mutableListOf()
 
         val query = "SELECT * FROM $tableName"
         val db = this.readableDatabase
@@ -72,8 +71,8 @@ class DataBaseHelper(
                 val alarmID = cursor.getInt(0)
                 val timeSet = convertFromStringToDate(cursor.getString(1))
 
-                val alarmTimeModel = AlarmTimeModel(alarmID, timeSet)
-                returnList.add(alarmTimeModel)
+                val Alarm = Alarm(alarmID, timeSet)
+                returnList.add(Alarm)
 
             } while (cursor.moveToNext())
         }
@@ -83,18 +82,18 @@ class DataBaseHelper(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addStoppedTime(timeStopped : NotificationTimeModel) : Boolean {
+    fun addStoppedTime(timeStopped : Alarm) : Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
 
-        cv.put(COLUMN_TIMESTOPPED, timeStopped.timeStopped_toString())
+        cv.put(COLUMN_TIMESTOPPED, timeStopped.time_toString())
 
         val insert = db.insert(NOTIFICATION_TABLE_NAME, null, cv)
         return insert != Integer.toUnsignedLong(-1)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addCollection(alarms: List<AlarmTimeModel>) {
+    fun addCollection(alarms: List<Alarm>) {
         alarms.forEach { alarm ->
             addAlarmTime(alarm)
         }

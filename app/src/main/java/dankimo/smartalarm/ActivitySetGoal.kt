@@ -24,13 +24,12 @@ class ActivitySetGoal : AppCompatActivity() {
 
     private fun buttonNextClicked() {
         val setMainIntent = Intent(this, MainActivity::class.java)
+        setMainIntent.putExtra("setNewAlarm", true)
         saveData()
         startActivity(setMainIntent)
     }
 
     private fun saveData() {
-        DB_HELPER = DataBaseHelper(this)
-
         val sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
         val spEditor = sp.edit()
 
