@@ -18,6 +18,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationBarView
 import dankimo.smartalarm.databinding.ActivityMainBinding
 import dankimo.smartalarm.models.Alarm
@@ -95,6 +96,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             setOf(R.id.fragment_home)) //  IDs of fragments you want without the ActionBar home/up button
 
         setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.bottomNav.setupWithNavController(navController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -128,35 +130,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 //            }
 //        }
 //    }
-
-    private fun onHomeClicked() : Boolean {
-        HomeFragmentDirections()
-    }
-
-    private fun onStatsClicked() : Boolean {
-        supportFragmentManager.commit {
-            replace(R.id.frame_content, StatsFragment())
-        }
-        return true
-    }
-
-    private fun onSettingsClicked() : Boolean {
-        supportFragmentManager.commit {
-            replace(R.id.frame_content, SettingsFragment())
-        }
-        return true
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.nav_home -> onHomeClicked()
-            R.id.nav_stats -> onStatsClicked()
-            R.id.nav_settings -> onSettingsClicked()
-            else -> {
-                false
-            }
-        }
-    }
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
