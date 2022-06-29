@@ -8,19 +8,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationBarView
 import dankimo.smartalarm.databinding.ActivityMainBinding
 import java.util.*
@@ -63,7 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             startAlarm(calendar)
 
             supportFragmentManager.commit {
-                replace(R.id.frame_content, newHomeInstance(times!!))
+                replace(R.id.nav_host_fragment, newHomeInstance(times!!))
             }
         }
         else {
@@ -78,7 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         setContentView(binding.root)
 
         val host: NavHostFragment = supportFragmentManager
-            .findFragmentById(R.id.frame_content) as NavHostFragment? ?: return
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
 
         val navController = host.navController
 
@@ -116,21 +112,21 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private fun onHomeClicked() : Boolean {
         supportFragmentManager.commit {
-            replace(R.id.frame_content, newHomeInstance(times!!))
+            replace(R.id.nav_host_fragment, newHomeInstance(times!!))
         }
         return true
     }
 
     private fun onStatsClicked() : Boolean {
         supportFragmentManager.commit {
-            replace(R.id.frame_content, StatsFragment())
+            replace(R.id.nav_host_fragment, StatsFragment())
         }
         return true
     }
 
     private fun onSettingsClicked() : Boolean {
         supportFragmentManager.commit {
-            replace(R.id.frame_content, SettingsFragment())
+            replace(R.id.nav_host_fragment, SettingsFragment())
         }
         return true
     }
