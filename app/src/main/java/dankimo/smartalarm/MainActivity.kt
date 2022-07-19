@@ -6,19 +6,26 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
+<<<<<<< HEAD
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+=======
+import androidx.appcompat.app.AppCompatActivity
+>>>>>>> main
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+<<<<<<< HEAD
 import androidx.navigation.ui.setupWithNavController
+=======
+>>>>>>> main
 import com.google.android.material.navigation.NavigationBarView
 import dankimo.smartalarm.databinding.ActivityMainBinding
 import dankimo.smartalarm.models.Alarm
@@ -71,7 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             }
 
             supportFragmentManager.commit {
-                replace(R.id.frame_content, newHomeInstance(times!!))
+                replace(R.id.nav_host_fragment, newHomeInstance(times!!))
             }
         }
         else {
@@ -88,7 +95,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         setContentView(binding.root)
 
         val host: NavHostFragment = supportFragmentManager
-            .findFragmentById(R.id.frame_content) as NavHostFragment? ?: return
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
 
         navController = host.navController
 
@@ -131,28 +138,25 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 //        }
 //    }
 
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.reset_alarms -> {
-                // delete time settings for testing alarm, should just add reset button for this
-                val sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-                val spEditor = sp.edit()
-                spEditor.clear()
-                spEditor.apply()
-
-                val setInitialIntent = Intent(this, ActivitySetInitial::class.java)
-                startActivity(setInitialIntent)
-
-                return true
-            }
-            R.id.reset_records -> {
-                return true
-            }
-            else -> {
-                return super.onOptionsItemSelected(item)
-            }
+    private fun onHomeClicked() : Boolean {
+        supportFragmentManager.commit {
+            replace(R.id.nav_host_fragment, newHomeInstance(times!!))
         }
+        return true
+    }
+
+    private fun onStatsClicked() : Boolean {
+        supportFragmentManager.commit {
+            replace(R.id.nav_host_fragment, StatsFragment())
+        }
+        return true
+    }
+
+    private fun onSettingsClicked() : Boolean {
+        supportFragmentManager.commit {
+            replace(R.id.nav_host_fragment, SettingsFragment())
+        }
+        return true
     }
 
     override fun onSupportNavigateUp(): Boolean {
