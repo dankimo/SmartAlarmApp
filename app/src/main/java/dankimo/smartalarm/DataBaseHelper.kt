@@ -17,9 +17,9 @@ val NOTIFICATION_TABLE_NAME = "NotificationTimes"
 val COLUMN_TIMESET = "Time_Set"
 val COLUMN_TIMESTOPPED = "Time_Stopped"
 val COLUMN_ALARMID = "Alarm_Id"
-var DB_HELPER : DatabaseHelper? = null
+var DB_HELPER : DataBaseHelper? = null
 
-class DatabaseHelper(
+class DataBaseHelper (
     context: Context?,
     name: String? = "smartalarm.db",
     factory: SQLiteDatabase.CursorFactory? = null,

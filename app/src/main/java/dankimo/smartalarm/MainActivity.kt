@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     private var alarmMgr: AlarmManager? = null
     private lateinit var alarmIntent: PendingIntent
     private lateinit var navController: NavController
+    private lateinit var dbh : DataBaseHelper
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -131,7 +132,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     private fun onHomeClicked() : Boolean {
         supportFragmentManager.commit {
-            replace(R.id.frame_content, HomeFragment())
+            replace(R.id.frame_content, newHomeInstance(times!!))
         }
         return true
     }
@@ -245,7 +246,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveAlarmToDB(alarmTime : Calendar) {
-        val dbh = DatabaseHelper(this)
+        val dbh = DataBaseHelper(this)
 
         val alarmModel = Alarm(null, calendarToLocalDateTime(alarmTime))
         dbh.addAlarmTime(alarmModel)

@@ -80,11 +80,9 @@ class StatsFragment : Fragment() {
         // Create Goal Time DataSet
         val goalTimeEntries : List<Entry>? = createGoalTimeEntries()
         // Create Times Set Data Set
-        val timesSetEntries : List<Entry>? = createTimeDataSet(
-            timesSet as List<Alarm>)
+        val timesSetEntries : List<Entry>? = createTimeDataSet(timesSet)
         // Create Times Stopped Data Set
-        val timesStoppedEntries : List<Entry>? = createTimeDataSet(
-            timesStopped as List<Alarm>)
+        val timesStoppedEntries : List<Entry>? = createTimeDataSet(timesStopped)
 
         timesSetDataSet = LineDataSet(timesSetEntries, "Time Set")
         timesStoppedDataSet = LineDataSet(timesStoppedEntries, "Time Stopped")
@@ -109,8 +107,8 @@ class StatsFragment : Fragment() {
 
     // map an individual list of times to a dataset object
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createTimeDataSet(times : List<Alarm>) : List<Entry> {
-        val output = times.map { entry ->
+    fun createTimeDataSet(times : List<Alarm>?) : List<Entry>? {
+        val output = times?.map { entry ->
             val date = convertDateToFloat(entry.time)
             val time = convertTimeToFloat(entry.time)
             Entry(date, time)
