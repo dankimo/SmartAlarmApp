@@ -6,17 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-
 import dankimo.smartalarm.ALARM_CHANNEL_ID
 import dankimo.smartalarm.R
 import dankimo.smartalarm.ringTone
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        var stopAlarmIntent =
+        val stopAlarmIntent =
             PendingIntent.getBroadcast(context, 1,
                 Intent(context, StopAlarmReceiver::class.java), 0)
 
@@ -29,7 +27,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(stopAlarmIntent)
 
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
         }
 
@@ -42,7 +40,7 @@ class AlarmReceiver : BroadcastReceiver() {
     fun playAlarmSound(context: Context?) {
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 
-        ringTone = RingtoneManager.getRingtone(context, alarmSound);
-        ringTone!!.play();
+        ringTone = RingtoneManager.getRingtone(context, alarmSound)
+        ringTone!!.play()
     }
 }

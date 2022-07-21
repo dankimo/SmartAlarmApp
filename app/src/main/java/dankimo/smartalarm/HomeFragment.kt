@@ -9,10 +9,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
 import dankimo.smartalarm.databinding.FragmentHomeBinding
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -23,19 +21,19 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
 
         binding = FragmentHomeBinding.inflate(layoutInflater)
 
-        var title : TextView = activity!!.findViewById(R.id.toolbar_title)
+        val title : TextView = activity!!.findViewById(R.id.toolbar_title)
         title.text = "Home"
 
-        var times : HashMap<String, Int> = arguments!!.getSerializable("Times") as HashMap<String, Int>
+        val times : HashMap<String, Int> = arguments!!.getSerializable("Times") as HashMap<String, Int>
 
-        var currentTime = Calendar.getInstance()
+        val currentTime = Calendar.getInstance()
         currentTime.set(Calendar.HOUR_OF_DAY, times["currentHour"]!!)
         currentTime.set(Calendar.MINUTE, times["currentMinute"]!!)
-        var goalTime = Calendar.getInstance()
+        val goalTime = Calendar.getInstance()
         goalTime.set(Calendar.HOUR_OF_DAY, times["goalHour"]!!)
         goalTime.set(Calendar.MINUTE, times["goalMinute"]!!)
 

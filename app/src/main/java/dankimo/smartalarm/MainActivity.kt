@@ -40,12 +40,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     private var alarmMgr: AlarmManager? = null
     private lateinit var alarmIntent: PendingIntent
     private lateinit var navController: NavController
-    private lateinit var dbh : DataBaseHelper
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        DB_HELPER = DataBaseHelper(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -80,8 +81,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
 
         setSupportActionBar(binding.toolbar)
-        supportActionBar!!.setDisplayShowTitleEnabled(false);
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true);
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         binding.toolbar.overflowIcon?.setTint(ContextCompat.getColor(this, R.color.white))
 

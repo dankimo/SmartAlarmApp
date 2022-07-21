@@ -29,11 +29,11 @@ class StatsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
 
         binding = FragmentStatsBinding.inflate(layoutInflater)
 
-        var title : TextView = activity!!.findViewById(R.id.toolbar_title)
+        val title : TextView = activity!!.findViewById(R.id.toolbar_title)
         title.text = "Stats"
 
         createDataSets()
@@ -59,18 +59,14 @@ class StatsFragment : Fragment() {
 
     fun populateChart()
     {
-        val chart = binding.chart;
-
-
+        val chart = binding.chart
     }
 
     // get the alarm time data from the db
     @RequiresApi(Build.VERSION_CODES.O)
     fun getData() {
-        val dbh = DatabaseHelper(context)
-
-        timesSet = dbh.getAll(ALARM_TABLE_NAME)
-        timesStopped = dbh.getAll(NOTIFICATION_TABLE_NAME)
+        timesSet = DB_HELPER?.getAll(ALARM_TABLE_NAME)
+        timesStopped = DB_HELPER?.getAll(NOTIFICATION_TABLE_NAME)
     }
 
     // create the dataset objects for the chart from the alarm time entries
@@ -119,9 +115,9 @@ class StatsFragment : Fragment() {
     // convert a day/month/year to a float e.g. 12/01/2022 = 12012022
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertDateToFloat(date: LocalDateTime) : Float {
-        val day = date.dayOfMonth * 1000000;
-        val month = date.monthValue * 1000;
-        val year = date.year;
+        val day = date.dayOfMonth * 1000000
+        val month = date.monthValue * 1000
+        val year = date.year
 
         return (day + month + year) as Float
     }

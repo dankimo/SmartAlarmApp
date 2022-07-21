@@ -59,7 +59,7 @@ class DataBaseHelper (
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getAll(tableName : String) : List<Alarm> {
-        var returnList: MutableList<Alarm> = mutableListOf()
+        val returnList: MutableList<Alarm> = mutableListOf()
 
         val query = "SELECT * FROM $tableName"
         val db = this.readableDatabase
@@ -71,8 +71,8 @@ class DataBaseHelper (
                 val alarmID = cursor.getInt(0)
                 val timeSet = convertFromStringToDate(cursor.getString(1))
 
-                val Alarm = Alarm(alarmID, timeSet)
-                returnList.add(Alarm)
+                val alarm = Alarm(alarmID, timeSet)
+                returnList.add(alarm)
 
             } while (cursor.moveToNext())
         }
