@@ -25,8 +25,9 @@ class DataBaseHelper (
     factory: SQLiteDatabase.CursorFactory? = null,
     version: Int = 1,
 ) : SQLiteOpenHelper(context, name, factory, version) {
+    private var db : SQLiteDatabase = writableDatabase
 
-    override fun onCreate(db: SQLiteDatabase?) {
+    override fun onCreate(db: SQLiteDatabase) {
         val createAlarmTableStatement = "CREATE TABLE IF NOT EXISTS $ALARM_TABLE_NAME " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_TIMESET TEXT," +
@@ -38,8 +39,8 @@ class DataBaseHelper (
                 "$COLUMN_ALARMID INTEGER," +
                 "FOREIGN KEY ($COLUMN_ALARMID) REFERENCES $ALARM_TABLE_NAME(ID));"
 
-        db?.execSQL(createAlarmTableStatement)
-        db?.execSQL(createNotificationTableStatement)
+        db.execSQL(createAlarmTableStatement)
+        db.execSQL(createNotificationTableStatement)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
