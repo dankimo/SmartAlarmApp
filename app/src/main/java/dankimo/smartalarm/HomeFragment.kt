@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import dankimo.smartalarm.databinding.FragmentHomeBinding
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -39,8 +40,8 @@ class HomeFragment : Fragment() {
         goalTime.set(Calendar.MINUTE, times["goalMinute"]!!)
 
         val dateFormat = SimpleDateFormat("HH:mm aa")
-        val currentString = "Alarm Set For ${dateFormat.format(currentTime)}"
-        val goalString = "Goal Time: ${dateFormat.format(goalTime)}"
+        val currentString = "Alarm Set For ${dateFormat.format(currentTime.time)}"
+        val goalString = "Goal Time: ${dateFormat.format(goalTime.time)}"
 
         binding.textViewCurrentAlarm.text = currentString
         binding.textViewGoalTime.text = goalString
