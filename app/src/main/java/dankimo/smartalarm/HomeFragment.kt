@@ -31,12 +31,12 @@ class HomeFragment : Fragment() {
 
         var times : HashMap<String, Int> = arguments!!.getSerializable("Times") as HashMap<String, Int>
 
-        var currentTime = Date()
-        currentTime.hours = times["currentHour"]!!
-        currentTime.minutes = times["currentMinute"]!!
-        var goalTime = Date()
-        goalTime.hours = times["goalHour"]!!
-        goalTime.minutes = times["goalMinute"]!!
+        var currentTime = Calendar.getInstance()
+        currentTime.set(Calendar.HOUR_OF_DAY, times["currentHour"]!!)
+        currentTime.set(Calendar.MINUTE, times["currentMinute"]!!)
+        var goalTime = Calendar.getInstance()
+        goalTime.set(Calendar.HOUR_OF_DAY, times["goalHour"]!!)
+        goalTime.set(Calendar.MINUTE, times["goalMinute"]!!)
 
         val dateFormat = SimpleDateFormat("HH:mm aa")
         val currentString = "Alarm Set For ${dateFormat.format(currentTime)}"

@@ -35,8 +35,8 @@ class ActivitySetGoal : AppCompatActivity() {
 
         spEditor.putInt("currentHour", intent.getIntExtra("Current Hour", 0))
         spEditor.putInt("currentMinute", intent.getIntExtra("Current Minute", 0))
-        spEditor.putInt("goalHour", binding.timePickerGoal.currentHour)
-        spEditor.putInt("goalMinute", binding.timePickerGoal.currentMinute)
+        spEditor.putInt("goalHour", binding.timePickerGoal.hour)
+        spEditor.putInt("goalMinute", binding.timePickerGoal.hour)
 
         spEditor.commit()
     }

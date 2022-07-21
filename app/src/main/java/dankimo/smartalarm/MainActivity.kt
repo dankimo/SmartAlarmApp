@@ -130,7 +130,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 //    }
 
     private fun onHomeClicked() : Boolean {
-        HomeFragmentDirections()
+        supportFragmentManager.commit {
+            replace(R.id.frame_content, HomeFragment())
+        }
+        return true
     }
 
     private fun onStatsClicked() : Boolean {
