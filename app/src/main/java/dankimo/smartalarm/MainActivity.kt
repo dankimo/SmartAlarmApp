@@ -114,23 +114,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         return f
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.Id.reset_running -> {
-//
-//            }
-//            R.Id.reset_cycling -> {
-//
-//            }
-//            R.Id.reset_all -> {
-//
-//            }
-//            else -> {
-//                return super.onOptionsItemSelected(item)
-//            }
-//        }
-//    }
-
     private fun onHomeClicked() : Boolean {
         supportFragmentManager.commit {
             replace(R.id.frame_content, newHomeInstance(times!!))
@@ -209,8 +192,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
 
         val timeSet = DB_HELPER?.getTimeSet()
-        return hashMapOf("currentHour" to timeSet?.time.hour, "currentMinute" to timeSet?.time.minute,
-            "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))
+        /* hashMapOf("currentHour" to timeSet!!.time.hour, "currentMinute" to timeSet.time.minute,
+            "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))*/
+
+        return hashMapOf("currentHour" to 12, "currentMinute" to 12, "goalHour" to 12, "goalMinute" to 12)
     }
 
     private fun cancelAlarm() {

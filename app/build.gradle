@@ -5,6 +5,8 @@ plugins {
 }
 
 android {
+
+    namespace 'dankimo.smartalarm'
     compileSdk 32
 
     defaultConfig {
