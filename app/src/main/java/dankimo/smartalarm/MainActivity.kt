@@ -199,21 +199,18 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         StopAlarmReceiver.stopAlarmSound(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun loadData() : HashMap<String, Int>? {
         val sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
-        if (!sp.contains("currentHour") ||
-                !sp.contains("currentMinute") ||
-                !sp.contains("goalHour") ||
-                !sp.contains("goalMinute"))
+        if (!sp.contains("goalHour") || !sp.contains("goalMinute"))
         {
             return null
         }
 
-        return hashMapOf("currentHour" to sp.getInt("currentHour", 0),
-        "currentMinute" to sp.getInt("currentMinute", 0),
-        "goalHour" to sp.getInt("goalHour", 0),
-        "goalMinute" to sp.getInt("goalMinute", 0))
+        val timeSet = DB_HELPER?.getTimeSet()
+        return hashMapOf("currentHour" to timeSet?.time.hour, "currentMinute" to timeSet?.time.minute,
+            "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))
     }
 
     private fun cancelAlarm() {

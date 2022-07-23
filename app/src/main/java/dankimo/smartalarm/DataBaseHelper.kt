@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import dankimo.smartalarm.models.Alarm
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -80,6 +81,22 @@ class DataBaseHelper (
         cursor.close()
         db.close()
         return returnList
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTimeSet() : Alarm? {
+        var alarm : Alarm? = null
+        var query = "SELECT $COLUMN_TIMESET FROM $ALARM_TABLE_NAME ORDER BY id DESC LIMIT 1"
+        var db = this.readableDatabase
+
+        var cursor: Cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            var timeSet = convertFromStringToDate(cursor.getString(0))
+            alarm = Alarm(null, timeSet)
+        }
+
+        return alarm
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
