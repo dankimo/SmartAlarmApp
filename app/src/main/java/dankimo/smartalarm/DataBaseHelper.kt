@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import dankimo.smartalarm.models.Alarm
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import dankimo.smartalarm.models.dateStringPattern
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 
 val ALARM_TABLE_NAME = "AlarmTimes"
 val NOTIFICATION_TABLE_NAME = "NotificationTimes"
@@ -120,7 +120,13 @@ class DataBaseHelper (
     companion object {
         @RequiresApi(Build.VERSION_CODES.O)
         fun convertFromStringToDate(date : String) : LocalDateTime {
-            val dateFormatter = DateTimeFormatter.ofPattern(dateStringPattern)
+            val dateFormatter =
+                DateTimeFormatterBuilder().appendPattern(dateStringPattern)
+                    .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                    .parseDefaulting(ChronoField.MICRO_OF_SECOND, 0)
+                    .parseDefaulting(ChronoField.MILLI_OF_SECOND, 0)
+                    .parseDefaulting(ChronoField.NANO_OF_SECOND, 0)
+                    .toFormatter()
             return LocalDateTime.parse(date, dateFormatter)
         }
     }

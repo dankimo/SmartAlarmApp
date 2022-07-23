@@ -2,10 +2,10 @@ package dankimo.smartalarm.models
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-val dateStringPattern = "yyyy-MM-dd hh:mm:ss;"
+val dateStringPattern = "yyyy-MM-dd HH:mm:ss"
 
 open class Alarm (
     id: Int? = null,
