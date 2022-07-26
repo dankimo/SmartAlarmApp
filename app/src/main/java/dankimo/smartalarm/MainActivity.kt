@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             timesSet = true
         }
 
-        // temp code till i actually start storing settings
         if (timesSet) {
             val calendar = Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, times!!["currentHour"]!!)
@@ -192,19 +191,20 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
 
         val timeSet = DB_HELPER?.getTimeSet()
-        return hashMapOf("currentHour" to timeSet!!.time.hour, "currentMinute" to timeSet.time.minute,
+        return hashMapOf("currentHour" to timeSet!!.time.hour, "currentMinute" to timeSet!!.time.minute,
             "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))
+        //return hashMapOf("currentHour" to 12, "currentMinute" to 12, "goalHour" to 12, "goalMinute" to 12)
     }
 
     private fun cancelAlarm() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         var intent = Intent(this, AlarmReceiver::class.java)
-        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
+        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.cancel(pendingIntent)
 
         intent = Intent(this, NotificationReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
+        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.cancel(pendingIntent)
     }
@@ -213,13 +213,13 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     private fun startAlarm(c : Calendar) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         var intent = Intent(this, AlarmReceiver::class.java)
-        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0)
+        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
         saveAlarmToDB(c)
 
         intent = Intent(this, NotificationReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(this, 2, intent, 0)
+        pendingIntent = PendingIntent.getBroadcast(this, 2, intent, PendingIntent.FLAG_IMMUTABLE)
         c.add(Calendar.SECOND, 5)
 
         alarmManager.setExact(AlarmManager.RTC, c.timeInMillis, pendingIntent)

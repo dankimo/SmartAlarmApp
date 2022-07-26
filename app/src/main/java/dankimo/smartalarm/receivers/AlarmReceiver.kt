@@ -16,7 +16,7 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val stopAlarmIntent =
             PendingIntent.getBroadcast(context, 1,
-                Intent(context, StopAlarmReceiver::class.java), 0)
+                Intent(context, StopAlarmReceiver::class.java), PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(context!!, ALARM_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm)

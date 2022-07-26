@@ -120,13 +120,6 @@ class DataBaseHelper (
     companion object {
         @RequiresApi(Build.VERSION_CODES.O)
         fun convertFromStringToDate(date : String) : LocalDateTime {
-            val dateFormatter =
-                DateTimeFormatterBuilder().appendPattern(dateStringPattern)
-                    .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
-                    .parseDefaulting(ChronoField.MICRO_OF_SECOND, 0)
-                    .parseDefaulting(ChronoField.MILLI_OF_SECOND, 0)
-                    .parseDefaulting(ChronoField.NANO_OF_SECOND, 0)
-                    .toFormatter()
             return LocalDateTime.parse(date, dateFormatter)
         }
     }

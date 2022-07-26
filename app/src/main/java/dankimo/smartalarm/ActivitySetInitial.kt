@@ -25,7 +25,7 @@ class ActivitySetInitial : AppCompatActivity() {
     private fun buttonNextClicked() {
         val setGoalIntent = Intent(this, ActivitySetGoal::class.java)
         setGoalIntent.putExtra("Current Hour", binding.timePickerInitial.hour)
-        setGoalIntent.putExtra("Current Minute", binding.timePickerInitial.hour)
+        setGoalIntent.putExtra("Current Minute", binding.timePickerInitial.minute)
         startActivity(setGoalIntent)
     }
 }

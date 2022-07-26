@@ -13,7 +13,7 @@ class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val notificationTappedIntent =
             PendingIntent.getBroadcast(context, 1,
-                Intent(context, NotificationTappedReceiver::class.java), 0)
+                Intent(context, NotificationTappedReceiver::class.java), PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(context!!, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm)

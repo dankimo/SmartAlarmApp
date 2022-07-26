@@ -46,9 +46,11 @@ class ActivitySetGoal : AppCompatActivity() {
 
         spEditor.commit()
 
+        val hour = intent.getIntExtra("Current Hour", 0)
+        val minute = intent.getIntExtra("Current Minute", 0)
         val currentTime = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, intent.getIntExtra("Current Hour", 0))
-            set(Calendar.MINUTE, intent.getIntExtra("Current Minute", 0))
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
         }
 
         val currentTimeAlarm = Alarm(
