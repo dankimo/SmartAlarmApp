@@ -149,11 +149,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.reset_alarms -> {
-                // delete time settings for testing alarm, should just add reset button for this
                 val sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
                 val spEditor = sp.edit()
                 spEditor.clear()
                 spEditor.apply()
+
+                cancelAlarm()
 
                 val setInitialIntent = Intent(this, ActivitySetInitial::class.java)
                 startActivity(setInitialIntent)
@@ -177,7 +178,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     override fun onStop() {
         super.onStop()
 
-        cancelAlarm()
         StopAlarmReceiver.stopAlarmSound(this)
     }
 

@@ -27,15 +27,12 @@ class App : Application() {
             val channelName = "Smart Alarm"
 
             val alarmNotificationChannel = NotificationChannel(ALARM_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH)
-            val audioAttributes = AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setUsage(AudioAttributes.USAGE_ALARM)
-                .build()
+            alarmNotificationChannel.setSound(null, null);
 
-            alarmNotificationChannel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM), audioAttributes)
             alarmNotificationChannel.description = "Alarm Notifications"
 
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.deleteNotificationChannel(ALARM_CHANNEL_ID)
             notificationManager.createNotificationChannel(alarmNotificationChannel)
 
             // create the channel for the reminder notifications
