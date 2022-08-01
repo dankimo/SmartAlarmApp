@@ -212,17 +212,18 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startAlarm(c : Calendar) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        var intent = Intent(this, AlarmReceiver::class.java)
-        var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
-
+        val alarmIntent = Intent(this, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, 1, alarmIntent, PendingIntent.FLAG_IMMUTABLE)
+        
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
         saveAlarmToDB(c)
 
-        intent = Intent(this, NotificationReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(this, 2, intent, PendingIntent.FLAG_IMMUTABLE)
-        c.add(Calendar.SECOND, 5)
+        val notificationIntent = Intent(this, NotificationReceiver::class.java)
+        val pendingNotificationIntent = PendingIntent.getBroadcast(
+            this, 2, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+        c.add(Calendar.MINUTE, 1)
 
-        alarmManager.setExact(AlarmManager.RTC, c.timeInMillis, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC, c.timeInMillis, pendingNotificationIntent)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

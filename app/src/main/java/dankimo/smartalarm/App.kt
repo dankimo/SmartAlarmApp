@@ -28,7 +28,6 @@ class App : Application() {
 
             val alarmNotificationChannel = NotificationChannel(ALARM_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH)
             alarmNotificationChannel.setSound(null, null);
-
             alarmNotificationChannel.description = "Alarm Notifications"
 
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -39,7 +38,8 @@ class App : Application() {
             val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, "Smart Alarm Notifications",
             NotificationManager.IMPORTANCE_HIGH)
             notificationChannel.description = "Text Notifications"
-
+            notificationChannel.setSound(null, null);
+            notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID)
             notificationManager.createNotificationChannel(notificationChannel)
         }
     }
