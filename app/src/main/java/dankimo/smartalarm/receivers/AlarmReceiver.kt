@@ -1,5 +1,6 @@
 package dankimo.smartalarm.receivers
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context

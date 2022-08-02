@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             return null
         }
 
-        val timeSet = DB_HELPER?.getTimeSet()
+        val timeSet = DB_HELPER?.getLatestTimeSet()
         return hashMapOf("currentHour" to timeSet!!.time.hour, "currentMinute" to timeSet!!.time.minute,
             "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))
         //return hashMapOf("currentHour" to 12, "currentMinute" to 12, "goalHour" to 12, "goalMinute" to 12)

@@ -19,8 +19,7 @@ import java.time.LocalDateTime
 
 class StatsFragment : Fragment() {
     private lateinit var binding: FragmentStatsBinding
-    private var timesSet : List<Alarm>? = null
-    private var timesStopped : List<Alarm>? = null
+    private var alarms : List<Alarm>? = null
     private var timesSetDataSet : LineDataSet? = null
     private var timesStoppedDataSet : LineDataSet? = null
     private var goalTimeDataSet : LineDataSet? = null
@@ -65,8 +64,7 @@ class StatsFragment : Fragment() {
     // get the alarm time data from the db
     @RequiresApi(Build.VERSION_CODES.O)
     fun getData() {
-        timesSet = DB_HELPER?.getAll(ALARM_TABLE_NAME)
-        timesStopped = DB_HELPER?.getAll(NOTIFICATION_TABLE_NAME)
+        alarms = DB_HELPER?.getAllAlarms(ALARM_TABLE_NAME)
     }
 
     // create the dataset objects for the chart from the alarm time entries
@@ -76,9 +74,9 @@ class StatsFragment : Fragment() {
         // Create Goal Time DataSet
         val goalTimeEntries : List<Entry>? = createGoalTimeEntries()
         // Create Times Set Data Set
-        val timesSetEntries : List<Entry>? = createTimeDataSet(timesSet)
+        val timesSetEntries : List<Entry>? = createTimeDataSet(alarms)
         // Create Times Stopped Data Set
-        val timesStoppedEntries : List<Entry>? = createTimeDataSet(timesStopped)
+        val timesStoppedEntries : List<Entry>? = createTimeDataSet(alarms)
 
         timesSetDataSet = LineDataSet(timesSetEntries, "Time Set")
         timesStoppedDataSet = LineDataSet(timesStoppedEntries, "Time Stopped")
@@ -93,8 +91,8 @@ class StatsFragment : Fragment() {
         val goalMinute = sp?.getInt("goalMinute", 0)
         // get the range of dates alarms have been set for
         // then map the goal time for each date
-        val goalTimeData = timesSet?.map { entry ->
-            val date = convertDateToFloat(entry.time)
+        val goalTimeData = alarms?.map { entry ->
+            val date = convertDateToFloat(entry.timeSet)
             Entry(date, (goalHour!! * 100 + goalMinute!!) as Float)
         }
 

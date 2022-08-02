@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.widget.Toast
 import androidx.annotation.RequiresApi
+import dankimo.smartalarm.DB_HELPER
 import dankimo.smartalarm.DataBaseHelper
 import dankimo.smartalarm.models.NotificationTimeModel
 import java.time.LocalDateTime
@@ -13,12 +13,9 @@ import java.time.LocalDateTime
 class NotificationTappedReceiver : BroadcastReceiver() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
-        Toast.makeText(context, "RECEIVED", Toast.LENGTH_LONG)
         val alarmId = intent?.getIntExtra("AlarmId", 0)
 
-        Toast.makeText(context, alarmId!!.toString(), Toast.LENGTH_LONG).show()
-
-        if (alarmId != 0) updateAlarmInDB(context, alarmId)
+        if (alarmId != 0) DB_HELPER?.addStoppedTime(context, alarmId)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

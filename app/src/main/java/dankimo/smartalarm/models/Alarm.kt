@@ -19,13 +19,20 @@ val dateFormatter : DateTimeFormatter =
 
 open class Alarm (
     id: Int? = null,
-    time: LocalDateTime,
+    timeSet: LocalDateTime,
+    timeStopped: LocalDateTime
 ) {
-    val id : Int? = id
-    val time : LocalDateTime = time
+    val Id : Int? = id
+    val TimeSet : LocalDateTime = timeSet
+    val TimeStopped : LocalDateTime = timeStopped
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun time_toString() : String{
-        return dateFormatter.format(time)
+    fun timeSet_toString() : String{
+        return dateFormatter.format(TimeSet)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun timeStopped_toString() : String{
+        return dateFormatter.format(TimeSet)
     }
 }

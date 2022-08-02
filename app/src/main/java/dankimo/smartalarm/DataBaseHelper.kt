@@ -8,13 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import androidx.annotation.RequiresApi
 import dankimo.smartalarm.models.Alarm
-import dankimo.smartalarm.models.dateStringPattern
+import dankimo.smartalarm.models.dateFormatter
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatterBuilder
-import java.time.temporal.ChronoField
+
 
 val ALARM_TABLE_NAME = "AlarmTimes"
-val NOTIFICATION_TABLE_NAME = "NotificationTimes"
 val COLUMN_TIMESET = "Time_Set"
 val COLUMN_TIMESTOPPED = "Time_Stopped"
 val COLUMN_ALARMID = "Alarm_Id"
@@ -32,16 +30,10 @@ class DataBaseHelper (
         val createAlarmTableStatement = "CREATE TABLE IF NOT EXISTS $ALARM_TABLE_NAME " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_TIMESET TEXT," +
+                "$COLUMN_TIMESTOPPED TEXT," +
                 "$COLUMN_TIMESTOPPED TEXT);"
 
-        val createNotificationTableStatement = "CREATE TABLE IF NOT EXISTS $NOTIFICATION_TABLE_NAME " +
-                "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "$COLUMN_TIMESTOPPED TEXT," +
-                "$COLUMN_ALARMID INTEGER," +
-                "FOREIGN KEY ($COLUMN_ALARMID) REFERENCES $ALARM_TABLE_NAME(ID));"
-
         db.execSQL(createAlarmTableStatement)
-        db.execSQL(createNotificationTableStatement)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -53,14 +45,14 @@ class DataBaseHelper (
         val db = this.writableDatabase
         val cv = ContentValues()
 
-        cv.put(COLUMN_TIMESET, time.time_toString())
+        cv.put(COLUMN_TIMESET, time.timeSet_toString())
 
         val insert = db.insert(ALARM_TABLE_NAME, null, cv)
         return insert != Integer.toUnsignedLong(-1)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getAll(tableName : String) : List<Alarm> {
+    fun getAllAlarms(tableName : String) : List<Alarm> {
         val returnList: MutableList<Alarm> = mutableListOf()
 
         val query = "SELECT * FROM $tableName"
@@ -84,15 +76,34 @@ class DataBaseHelper (
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getTimeSet() : Alarm? {
+    fun getAlarm(alarmId : Int) : Alarm? {
         var alarm : Alarm? = null
-        var query = "SELECT $COLUMN_TIMESET FROM $ALARM_TABLE_NAME ORDER BY id DESC LIMIT 1"
-        var db = this.readableDatabase
+        val query =
+            "SELECT $COLUMN_ALARMID, $COLUMN_TIMESET FROM $ALARM_TABLE_NAME WHERE $COLUMN_ALARMID = $alarmId"
+        val db = this.readableDatabase
 
-        var cursor: Cursor = db.rawQuery(query, null)
+        val cursor: Cursor = db.rawQuery(query, null)
 
         if (cursor.moveToFirst()) {
-            var timeSet = convertFromStringToDate(cursor.getString(0))
+            val id = cursor.getInt(0)
+            val timeSet = convertFromStringToDate(cursor.getString(1))
+            alarm = Alarm(id, timeSet)
+        }
+
+        return alarm
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getLatestTimeSet() : Alarm? {
+        var alarm : Alarm? = null
+        val query =
+            "SELECT $COLUMN_TIMESET FROM $ALARM_TABLE_NAME ORDER BY id DESC LIMIT 1"
+        val db = this.readableDatabase
+
+        val cursor: Cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            val timeSet = convertFromStringToDate(cursor.getString(1))
             alarm = Alarm(null, timeSet)
         }
 
@@ -100,14 +111,12 @@ class DataBaseHelper (
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addStoppedTime(timeStopped : Alarm) : Boolean {
+    fun addStoppedTime(timeStopped : Alarm) {
         val db = this.writableDatabase
         val cv = ContentValues()
 
-        cv.put(COLUMN_TIMESTOPPED, timeStopped.time_toString())
-
-        val insert = db.insert(NOTIFICATION_TABLE_NAME, null, cv)
-        return insert != Integer.toUnsignedLong(-1)
+        cv.put(COLUMN_TIMESTOPPED, timeStopped.timeSet_toString())
+        db.update(ALARM_TABLE_NAME, cv, "$COLUMN_TIMESTOPPED= ?", arrayOf(timeStopped.id.toString()))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
