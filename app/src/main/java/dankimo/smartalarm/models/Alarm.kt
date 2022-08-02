@@ -24,7 +24,7 @@ open class Alarm (
 ) {
     val Id : Int? = id
     val TimeSet : LocalDateTime = timeSet
-    val TimeStopped : LocalDateTime? = timeStopped
+    var TimeStopped : LocalDateTime? = timeStopped
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun timeSet_toString() : String{

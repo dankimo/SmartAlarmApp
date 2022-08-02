@@ -41,11 +41,12 @@ class DataBaseHelper (
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addAlarmTime(time: Alarm) : Boolean {
+    fun addAlarm(time: Alarm) : Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
 
         cv.put(COLUMN_TIMESET, time.timeSet_toString())
+        cv.put(COLUMN_TIMESTOPPED, time.timeStopped_toString())
 
         val insert = db.insert(ALARM_TABLE_NAME, null, cv)
         return insert != Integer.toUnsignedLong(-1)
@@ -118,14 +119,14 @@ class DataBaseHelper (
         val db = this.writableDatabase
         val cv = ContentValues()
 
-        cv.put(COLUMN_TIMESTOPPED, timeStopped.timeSet_toString())
-        db.update(ALARM_TABLE_NAME, cv, "$COLUMN_TIMESTOPPED= ?", arrayOf(timeStopped.id.toString()))
+        cv.put(COLUMN_TIMESTOPPED, timeStopped.timeStopped_toString())
+        db.update(ALARM_TABLE_NAME, cv, "$COLUMN_TIMESTOPPED= ?", arrayOf(timeStopped.Id.toString()))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addCollection(alarms: List<Alarm>) {
         alarms.forEach { alarm ->
-            addAlarmTime(alarm)
+            addAlarm(alarm)
         }
     }
 

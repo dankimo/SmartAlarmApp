@@ -54,9 +54,8 @@ class ActivitySetGoal : AppCompatActivity() {
         }
 
         val currentTimeAlarm = Alarm(
-            null, LocalDateTime.ofInstant(currentTime.toInstant(), currentTime.timeZone.toZoneId()))
+            null, LocalDateTime.ofInstant(currentTime.toInstant(), currentTime.timeZone.toZoneId()), null)
 
         DB_HELPER?.addStoppedTime(currentTimeAlarm)
-        DB_HELPER?.addAlarmTime(currentTimeAlarm)
     }
 }

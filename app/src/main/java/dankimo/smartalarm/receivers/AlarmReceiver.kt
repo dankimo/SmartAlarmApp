@@ -35,7 +35,7 @@ class AlarmReceiver : BroadcastReceiver() {
         playAlarmSound(context)
     }
 
-    fun playAlarmSound(context: Context?) {
+    private fun playAlarmSound(context: Context?) {
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 
         ringTone = RingtoneManager.getRingtone(context, alarmSound)

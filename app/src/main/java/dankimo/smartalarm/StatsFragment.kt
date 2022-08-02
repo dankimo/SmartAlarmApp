@@ -19,7 +19,12 @@ import java.time.LocalDateTime
 
 class StatsFragment : Fragment() {
     private lateinit var binding: FragmentStatsBinding
+
     private var alarms : List<Alarm>? = null
+
+    private var timesSetEntries : List<Entry>? = null
+    private var timesStoppedEntries : List<Entry>? = null
+
     private var timesSetDataSet : LineDataSet? = null
     private var timesStoppedDataSet : LineDataSet? = null
     private var goalTimeDataSet : LineDataSet? = null
@@ -73,10 +78,8 @@ class StatsFragment : Fragment() {
     {
         // Create Goal Time DataSet
         val goalTimeEntries : List<Entry>? = createGoalTimeEntries()
-        // Create Times Set Data Set
-        val timesSetEntries : List<Entry>? = createTimeDataSet(alarms)
-        // Create Times Stopped Data Set
-        val timesStoppedEntries : List<Entry>? = createTimeDataSet(alarms)
+        // Create Times Set / Stopped Data Sets
+        createDataSets(alarms)
 
         timesSetDataSet = LineDataSet(timesSetEntries, "Time Set")
         timesStoppedDataSet = LineDataSet(timesStoppedEntries, "Time Stopped")
@@ -92,7 +95,7 @@ class StatsFragment : Fragment() {
         // get the range of dates alarms have been set for
         // then map the goal time for each date
         val goalTimeData = alarms?.map { entry ->
-            val date = convertDateToFloat(entry.timeSet)
+            val date = convertDateToFloat(entry.TimeSet)
             Entry(date, (goalHour!! * 100 + goalMinute!!) as Float)
         }
 
@@ -103,11 +106,25 @@ class StatsFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun createTimeDataSet(times : List<Alarm>?) : List<Entry>? {
         val output = times?.map { entry ->
-            val date = convertDateToFloat(entry.time)
-            val time = convertTimeToFloat(entry.time)
+            val date = convertDateToFloat(entry.TimeSet)
+            val time = convertTimeToFloat(entry.TimeSet)
             Entry(date, time)
         }
         return output
+    }
+
+    fun createDataSets(times: List<Alarm>?) {
+        timesSetEntries = times?.map { entry ->
+            val date = convertDateToFloat(entry.TimeSet)
+            val time = convertTimeToFloat(entry.TimeSet)
+            Entry(date, time)
+        }
+
+        timesSetEntries = times?.map { entry ->
+            val date = convertDateToFloat(entry.TimeSet)
+            val time = convertTimeToFloat(entry.TimeSet)
+            Entry(date, time)
+        }
     }
 
     // convert a day/month/year to a float e.g. 12/01/2022 = 12012022

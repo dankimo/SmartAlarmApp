@@ -6,24 +6,17 @@ import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import dankimo.smartalarm.DB_HELPER
-import dankimo.smartalarm.DataBaseHelper
-import dankimo.smartalarm.models.NotificationTimeModel
 import java.time.LocalDateTime
 
 class NotificationTappedReceiver : BroadcastReceiver() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
         val alarmId = intent?.getIntExtra("AlarmId", 0)
+        alarmId ?: return
 
-        if (alarmId != 0) DB_HELPER?.addStoppedTime(context, alarmId)
-    }
+        val alarm = DB_HELPER?.getAlarm(alarmId)
+        alarm!!.TimeStopped = LocalDateTime.now()
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun updateAlarmInDB(context: Context?, alarmId: Int) {
-        val timeNow = LocalDateTime.now()
-
-        val timeStopped = NotificationTimeModel(null, timeNow, alarmId)
-        val dbh = DataBaseHelper(context)
-        dbh.addStoppedTime(timeStopped)
+        if (alarmId != 0) DB_HELPER?.addStoppedTime(alarm)
     }
 }
