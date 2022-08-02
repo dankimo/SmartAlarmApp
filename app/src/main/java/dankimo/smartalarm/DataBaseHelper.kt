@@ -64,8 +64,9 @@ class DataBaseHelper (
             do {
                 val alarmID = cursor.getInt(0)
                 val timeSet = convertFromStringToDate(cursor.getString(1))
+                val timeStopped = convertFromStringToDate(cursor.getString(2))
 
-                val alarm = Alarm(alarmID, timeSet)
+                val alarm = Alarm(alarmID, timeSet, timeStopped)
                 returnList.add(alarm)
 
             } while (cursor.moveToNext())
@@ -87,7 +88,8 @@ class DataBaseHelper (
         if (cursor.moveToFirst()) {
             val id = cursor.getInt(0)
             val timeSet = convertFromStringToDate(cursor.getString(1))
-            alarm = Alarm(id, timeSet)
+            val timeStopped = convertFromStringToDate(cursor.getString(2))
+            alarm = Alarm(id, timeSet, timeStopped)
         }
 
         return alarm
@@ -104,7 +106,8 @@ class DataBaseHelper (
 
         if (cursor.moveToFirst()) {
             val timeSet = convertFromStringToDate(cursor.getString(1))
-            alarm = Alarm(null, timeSet)
+            val timeStopped = convertFromStringToDate(cursor.getString(2))
+            alarm = Alarm(null, timeSet, timeStopped)
         }
 
         return alarm

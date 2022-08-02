@@ -20,11 +20,11 @@ val dateFormatter : DateTimeFormatter =
 open class Alarm (
     id: Int? = null,
     timeSet: LocalDateTime,
-    timeStopped: LocalDateTime
+    timeStopped: LocalDateTime?
 ) {
     val Id : Int? = id
     val TimeSet : LocalDateTime = timeSet
-    val TimeStopped : LocalDateTime = timeStopped
+    val TimeStopped : LocalDateTime? = timeStopped
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun timeSet_toString() : String{
