@@ -1,8 +1,9 @@
-package dankimo.smartalarm
+package dankimo.smartalarm.controllers
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.Cursor.FIELD_TYPE_STRING
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
@@ -16,11 +17,12 @@ val ALARM_TABLE_NAME = "AlarmTimes"
 val COLUMN_TIMESET = "Time_Set"
 val COLUMN_TIMESTOPPED = "Time_Stopped"
 val COLUMN_ALARMID = "Alarm_Id"
-var DB_HELPER : DataBaseHelper? = null
+val DB_NAME = "smartalarm.db"
+var DB : DataBaseController? = null
 
-class DataBaseHelper (
+class DataBaseController (
     context: Context?,
-    name: String? = "smartalarm.db",
+    name: String? = DB_NAME,
     factory: SQLiteDatabase.CursorFactory? = null,
     version: Int = 1,
 ) : SQLiteOpenHelper(context, name, factory, version) {
@@ -30,7 +32,6 @@ class DataBaseHelper (
         val createAlarmTableStatement = "CREATE TABLE IF NOT EXISTS $ALARM_TABLE_NAME " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_TIMESET TEXT," +
-                "$COLUMN_TIMESTOPPED TEXT," +
                 "$COLUMN_TIMESTOPPED TEXT);"
 
         db.execSQL(createAlarmTableStatement)
@@ -100,14 +101,18 @@ class DataBaseHelper (
     fun getLatestTimeSet() : Alarm? {
         var alarm : Alarm? = null
         val query =
-            "SELECT $COLUMN_TIMESET FROM $ALARM_TABLE_NAME ORDER BY id DESC LIMIT 1"
+            "SELECT $COLUMN_TIMESET, $COLUMN_TIMESTOPPED FROM $ALARM_TABLE_NAME ORDER BY id DESC LIMIT 1"
         val db = this.readableDatabase
 
         val cursor: Cursor = db.rawQuery(query, null)
 
+        var timeStopped: LocalDateTime? = null
         if (cursor.moveToFirst()) {
-            val timeSet = convertFromStringToDate(cursor.getString(1))
-            val timeStopped = convertFromStringToDate(cursor.getString(2))
+            val timeSet = convertFromStringToDate(cursor.getString(0))
+            if (cursor.getType(1) == FIELD_TYPE_STRING) {
+                timeStopped = convertFromStringToDate(cursor.getString(1))
+            }
+
             alarm = Alarm(null, timeSet, timeStopped)
         }
 
@@ -128,6 +133,11 @@ class DataBaseHelper (
         alarms.forEach { alarm ->
             addAlarm(alarm)
         }
+    }
+
+    fun resetDB(context: Context) {
+        context.deleteDatabase(DB_NAME);
+        this.onCreate(db)
     }
 
     companion object {

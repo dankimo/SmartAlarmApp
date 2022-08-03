@@ -19,6 +19,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.navigation.NavigationBarView
+import dankimo.smartalarm.controllers.DB
+import dankimo.smartalarm.controllers.DataBaseController
 import dankimo.smartalarm.databinding.ActivityMainBinding
 import dankimo.smartalarm.models.Alarm
 import dankimo.smartalarm.receivers.AlarmReceiver
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        DB_HELPER = DataBaseHelper(this)
+        DB = DataBaseController(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -190,7 +192,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             return null
         }
 
-        val alarm = DB_HELPER?.getLatestTimeSet()
+        val alarm = DB?.getLatestTimeSet()
         return hashMapOf("currentHour" to alarm!!.TimeSet.hour, "currentMinute" to alarm.TimeSet.minute,
             "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))
         //return hashMapOf("currentHour" to 12, "currentMinute" to 12, "goalHour" to 12, "goalMinute" to 12)
@@ -228,7 +230,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveNewAlarmToDB(alarmTime : Calendar) {
-        val dbh = DataBaseHelper(this)
+        val dbh = DataBaseController(this)
 
         val alarmModel = Alarm(null, calendarToLocalDateTime(alarmTime), null)
         dbh.addAlarm(alarmModel)

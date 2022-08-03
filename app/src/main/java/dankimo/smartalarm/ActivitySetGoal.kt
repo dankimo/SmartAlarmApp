@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.RequiresApi
+import dankimo.smartalarm.controllers.DB
 import dankimo.smartalarm.databinding.ActivitySetGoalBinding
 import dankimo.smartalarm.models.Alarm
 import java.time.LocalDateTime
@@ -56,6 +57,6 @@ class ActivitySetGoal : AppCompatActivity() {
         val currentTimeAlarm = Alarm(
             null, LocalDateTime.ofInstant(currentTime.toInstant(), currentTime.timeZone.toZoneId()), null)
 
-        DB_HELPER?.addStoppedTime(currentTimeAlarm)
+        DB?.addAlarm(currentTimeAlarm)
     }
 }
