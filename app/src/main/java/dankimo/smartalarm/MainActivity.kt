@@ -158,6 +158,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
                 cancelAlarm()
 
+                DB?.resetDB(this);
+
                 val setInitialIntent = Intent(this, ActivitySetInitial::class.java)
                 startActivity(setInitialIntent)
 
@@ -192,7 +194,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             return null
         }
 
-        val alarm = DB?.getLatestTimeSet()
+        val alarm = DB?.getLatestTimeSet() ?: return null
+
         return hashMapOf("currentHour" to alarm!!.TimeSet.hour, "currentMinute" to alarm.TimeSet.minute,
             "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))
         //return hashMapOf("currentHour" to 12, "currentMinute" to 12, "goalHour" to 12, "goalMinute" to 12)

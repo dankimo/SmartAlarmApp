@@ -11,12 +11,9 @@ import java.time.LocalDateTime
 class NotificationTappedReceiver : BroadcastReceiver() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
-        val alarmId = intent?.getIntExtra("AlarmId", 0)
-        alarmId ?: return
-
-        val alarm = DB?.getAlarm(alarmId)
+        val alarm = DB?.getLatestTimeSet()
         alarm!!.TimeStopped = LocalDateTime.now()
 
-        if (alarmId != 0) DB?.addStoppedTime(alarm)
+        DB?.addStoppedTime(alarm)
     }
 }

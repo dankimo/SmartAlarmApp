@@ -27,12 +27,13 @@ open class Alarm (
     var TimeStopped : LocalDateTime? = timeStopped
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun timeSet_toString() : String{
+    fun timeSet_toString() : String {
         return dateFormatter.format(TimeSet)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun timeStopped_toString() : String{
-        return dateFormatter.format(TimeSet)
+    fun timeStopped_toString() : String {
+        if (TimeStopped == null) return "";
+        return dateFormatter.format(TimeStopped)
     }
 }

@@ -30,7 +30,7 @@ class DataBaseController (
 
     override fun onCreate(db: SQLiteDatabase) {
         val createAlarmTableStatement = "CREATE TABLE IF NOT EXISTS $ALARM_TABLE_NAME " +
-                "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "($COLUMN_ALARMID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_TIMESET TEXT," +
                 "$COLUMN_TIMESTOPPED TEXT);"
 
@@ -101,19 +101,23 @@ class DataBaseController (
     fun getLatestTimeSet() : Alarm? {
         var alarm : Alarm? = null
         val query =
-            "SELECT $COLUMN_TIMESET, $COLUMN_TIMESTOPPED FROM $ALARM_TABLE_NAME ORDER BY id DESC LIMIT 1"
+            "SELECT $COLUMN_ALARMID, $COLUMN_TIMESET, $COLUMN_TIMESTOPPED FROM $ALARM_TABLE_NAME " +
+                    "ORDER BY $COLUMN_ALARMID DESC LIMIT 1"
         val db = this.readableDatabase
 
         val cursor: Cursor = db.rawQuery(query, null)
 
         var timeStopped: LocalDateTime? = null
         if (cursor.moveToFirst()) {
-            val timeSet = convertFromStringToDate(cursor.getString(0))
-            if (cursor.getType(1) == FIELD_TYPE_STRING) {
-                timeStopped = convertFromStringToDate(cursor.getString(1))
+            val id = cursor.getInt(0)
+            val timeSet = convertFromStringToDate(cursor.getString(1))
+            if (cursor.getType(2) == FIELD_TYPE_STRING) {
+                if (cursor.getString(2) != "") {
+                    timeStopped = convertFromStringToDate(cursor.getString(2))
+                }
             }
 
-            alarm = Alarm(null, timeSet, timeStopped)
+            alarm = Alarm(id, timeSet, timeStopped)
         }
 
         return alarm
@@ -125,7 +129,7 @@ class DataBaseController (
         val cv = ContentValues()
 
         cv.put(COLUMN_TIMESTOPPED, timeStopped.timeStopped_toString())
-        db.update(ALARM_TABLE_NAME, cv, "$COLUMN_TIMESTOPPED= ?", arrayOf(timeStopped.Id.toString()))
+        db.update(ALARM_TABLE_NAME, cv, "$COLUMN_ALARMID=?", arrayOf(timeStopped.Id.toString()))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
