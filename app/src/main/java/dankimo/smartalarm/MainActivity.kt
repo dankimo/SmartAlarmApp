@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
                 spEditor.clear()
                 spEditor.apply()
 
-                cancelAlarm()
+                cancelAlarms()
 
                 DB?.resetDB(this);
 
@@ -201,7 +201,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         //return hashMapOf("currentHour" to 12, "currentMinute" to 12, "goalHour" to 12, "goalMinute" to 12)
     }
 
-    private fun cancelAlarm() {
+    private fun cancelAlarms() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         var intent = Intent(this, AlarmReceiver::class.java)
         var pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
@@ -209,7 +209,7 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         alarmManager.cancel(pendingIntent)
 
         intent = Intent(this, NotificationReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
+        pendingIntent = PendingIntent.getBroadcast(this, 2, intent, PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.cancel(pendingIntent)
     }
