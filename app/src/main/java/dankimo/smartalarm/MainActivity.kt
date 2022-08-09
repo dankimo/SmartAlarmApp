@@ -221,7 +221,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         val pendingIntent = PendingIntent.getBroadcast(this, 1, alarmIntent, PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
-        saveNewAlarmToDB(c)
 
         val notificationIntent = Intent(this, NotificationReceiver::class.java)
         val pendingNotificationIntent = PendingIntent.getBroadcast(
@@ -233,10 +232,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveNewAlarmToDB(alarmTime : Calendar) {
-        val dbh = DataBaseController(this)
-
         val alarmModel = Alarm(null, calendarToLocalDateTime(alarmTime), null)
-        dbh.addAlarm(alarmModel)
+        DB?.addAlarm(alarmModel)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

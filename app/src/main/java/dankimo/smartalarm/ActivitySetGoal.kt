@@ -1,11 +1,13 @@
 package dankimo.smartalarm
 
 import android.content.Intent
+import android.database.sqlite.SQLiteReadOnlyDatabaseException
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import dankimo.smartalarm.controllers.DB
+import dankimo.smartalarm.controllers.DataBaseController
 import dankimo.smartalarm.databinding.ActivitySetGoalBinding
 import dankimo.smartalarm.models.Alarm
 import java.time.LocalDateTime
@@ -52,6 +54,7 @@ class ActivitySetGoal : AppCompatActivity() {
         val currentTime = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
         }
 
         val currentTimeAlarm = Alarm(

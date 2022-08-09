@@ -26,7 +26,7 @@ class DataBaseController (
     factory: SQLiteDatabase.CursorFactory? = null,
     version: Int = 1,
 ) : SQLiteOpenHelper(context, name, factory, version) {
-    private var db : SQLiteDatabase = writableDatabase
+    private var writeableDB : SQLiteDatabase = writableDatabase
 
     override fun onCreate(db: SQLiteDatabase) {
         val createAlarmTableStatement = "CREATE TABLE IF NOT EXISTS $ALARM_TABLE_NAME " +
@@ -43,13 +43,12 @@ class DataBaseController (
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addAlarm(time: Alarm) : Boolean {
-        val db = this.writableDatabase
         val cv = ContentValues()
 
         cv.put(COLUMN_TIMESET, time.timeSet_toString())
         cv.put(COLUMN_TIMESTOPPED, time.timeStopped_toString())
 
-        val insert = db.insert(ALARM_TABLE_NAME, null, cv)
+        val insert = writeableDB.insert(ALARM_TABLE_NAME, null, cv)
         return insert != Integer.toUnsignedLong(-1)
     }
 
@@ -58,9 +57,8 @@ class DataBaseController (
         val returnList: MutableList<Alarm> = mutableListOf()
 
         val query = "SELECT * FROM $tableName"
-        val db = this.readableDatabase
 
-        val cursor: Cursor = db.rawQuery(query, null)
+        val cursor: Cursor = writeableDB.rawQuery(query, null)
 
         if (cursor.moveToFirst()) {
             do {
@@ -74,7 +72,6 @@ class DataBaseController (
             } while (cursor.moveToNext())
         }
         cursor.close()
-        db.close()
         return returnList
     }
 
@@ -83,9 +80,8 @@ class DataBaseController (
         var alarm : Alarm? = null
         val query =
             "SELECT $COLUMN_ALARMID, $COLUMN_TIMESET FROM $ALARM_TABLE_NAME WHERE $COLUMN_ALARMID = $alarmId"
-        val db = this.readableDatabase
 
-        val cursor: Cursor = db.rawQuery(query, null)
+        val cursor: Cursor = writeableDB.rawQuery(query, null)
 
         if (cursor.moveToFirst()) {
             val id = cursor.getInt(0)
@@ -94,6 +90,7 @@ class DataBaseController (
             alarm = Alarm(id, timeSet, timeStopped)
         }
 
+        cursor.close()
         return alarm
     }
 
@@ -103,9 +100,8 @@ class DataBaseController (
         val query =
             "SELECT $COLUMN_ALARMID, $COLUMN_TIMESET, $COLUMN_TIMESTOPPED FROM $ALARM_TABLE_NAME " +
                     "ORDER BY $COLUMN_ALARMID DESC LIMIT 1"
-        val db = this.readableDatabase
 
-        val cursor: Cursor = db.rawQuery(query, null)
+        val cursor: Cursor = writeableDB.rawQuery(query, null)
 
         var timeStopped: LocalDateTime? = null
         if (cursor.moveToFirst()) {
@@ -120,16 +116,16 @@ class DataBaseController (
             alarm = Alarm(id, timeSet, timeStopped)
         }
 
+        cursor.close()
         return alarm
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addStoppedTime(timeStopped : Alarm) {
-        val db = this.writableDatabase
         val cv = ContentValues()
 
         cv.put(COLUMN_TIMESTOPPED, timeStopped.timeStopped_toString())
-        db.update(ALARM_TABLE_NAME, cv, "$COLUMN_ALARMID=?", arrayOf(timeStopped.Id.toString()))
+        writeableDB.update(ALARM_TABLE_NAME, cv, "$COLUMN_ALARMID=?", arrayOf(timeStopped.Id.toString()))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -141,7 +137,7 @@ class DataBaseController (
 
     fun resetDB(context: Context) {
         context.deleteDatabase(DB_NAME);
-        this.onCreate(db)
+        this.onCreate(writeableDB)
     }
 
     companion object {
