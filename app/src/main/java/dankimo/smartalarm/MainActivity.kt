@@ -212,10 +212,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         }
 
         val alarm = DB?.getLatestTimeSet() ?: return null
+        goalHour = sp.getInt("goalHour", 0)
+        goalMinute = sp.getInt("goalMinute", 0)
 
         return hashMapOf("currentDayOfYear" to alarm.TimeSet.dayOfYear,
             "currentHour" to alarm.TimeSet.hour, "currentMinute" to alarm.TimeSet.minute,
-            "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))
+            "goalHour" to goalHour, "goalMinute" to goalMinute)
         //return hashMapOf("currentHour" to 12, "currentMinute" to 12, "goalHour" to 12, "goalMinute" to 12)
     }
 
@@ -265,6 +267,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         // conversion
         val localDateTime = LocalDateTime.ofInstant(calendar.toInstant(), zoneID)
         return localDateTime
+    }
+
+    companion object {
+        var goalHour: Int = 0
+        var goalMinute: Int = 0
     }
 }
 

@@ -4,9 +4,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.internal.ContextUtils.getActivity
 import dankimo.smartalarm.MainActivity
+import dankimo.smartalarm.MainActivity.Companion.goalHour
+import dankimo.smartalarm.MainActivity.Companion.goalMinute
+import dankimo.smartalarm.SHARED_PREFS
 import dankimo.smartalarm.controllers.DB
 import dankimo.smartalarm.models.Alarm
 import java.time.LocalDateTime
@@ -31,8 +36,17 @@ class NotificationTappedReceiver : BroadcastReceiver() {
         if (alarm.TimeStopped!!.hour == alarm.TimeSet.hour) {
             if (alarm.TimeStopped!!.minute - alarm.TimeSet.minute <= 30)
             {
-                DB?.addAlarm(Alarm(null, alarm.TimeSet.minusMinutes(5).plusDays(1), null))
+                var newMinute = alarm.TimeSet.minusMinutes(5).minute;
+                if (newMinute < goalMinute && alarm.TimeStopped!!.hour == goalHour) {
+                    newMinute = goalMinute;
+                    val diff = alarm.TimeSet.minute - goalMinute
+                    DB?.addAlarm(Alarm(null, alarm.TimeSet.minusMinutes(diff as Long), null))
+                }
+                DB?.addAlarm(Alarm(null, alarm.TimeSet.minusMinutes(5), null))
                 context.sendBroadcast( Intent("UPDATE_ALARM"))
+            }
+            else {
+                Toast.makeText(context,"Wakeup > 30 minutes after alarm. Set for same time.", Toast.LENGTH_LONG,)
             }
         }
     }
