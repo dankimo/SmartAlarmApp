@@ -2,8 +2,10 @@ package dankimo.smartalarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -28,7 +30,6 @@ import dankimo.smartalarm.receivers.NotificationReceiver
 import dankimo.smartalarm.receivers.StopAlarmReceiver
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.HashMap
 
 val SHARED_PREFS = "SmartAlarmPrefs"
 
@@ -43,43 +44,22 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
     private lateinit var alarmIntent: PendingIntent
     private lateinit var navController: NavController
 
+    private val broadCastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            updateToLatestAlarm()
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        DB = DataBaseController(this)
+        updateToLatestAlarm()
+        registerReceiver(broadCastReceiver, IntentFilter("UPDATE_ALARM"))
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         binding.bottomNav.setOnItemSelectedListener(this)
-
-        val timesExtra : HashMap<String, Int>? = loadData()
-        if (timesExtra != null)
-        {
-            times = timesExtra
-            timesSet = true
-        }
-
-        if (timesSet) {
-            val calendar = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, times!!["currentHour"]!!)
-                set(Calendar.MINUTE, times!!["currentMinute"]!!)
-                set(Calendar.SECOND, 0)
-            }
-
-            if (intent.getBooleanExtra("setNewAlarm", false)) {
-                startAlarm(calendar)
-            }
-
-            supportFragmentManager.commit {
-                replace(R.id.frame_content, newHomeInstance(times!!))
-            }
-        }
-        else {
-            val setInitialIntent = Intent(this, ActivitySetInitial::class.java)
-            startActivity(setInitialIntent)
-        }
 
         setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -98,6 +78,11 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             setOf(R.id.fragment_home)) //  IDs of fragments you want without the ActionBar home/up button
 
         setupActionBarWithNavController(navController, appBarConfiguration)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(broadCastReceiver)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -158,7 +143,9 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
                 cancelAlarms()
 
-                DB?.resetDB(this);
+                DB?.resetDB(this)
+                // reconnect to db after deleting
+                DB = DataBaseController(this)
 
                 val setInitialIntent = Intent(this, ActivitySetInitial::class.java)
                 startActivity(setInitialIntent)
@@ -185,6 +172,36 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         StopAlarmReceiver.stopAlarmSound(this)
     }
 
+    fun updateToLatestAlarm() {
+        val timesExtra : HashMap<String, Int>? = loadData()
+        if (timesExtra != null)
+        {
+            times = timesExtra
+            timesSet = true
+        }
+
+        if (timesSet) {
+            val calendar = Calendar.getInstance().apply {
+                set(Calendar.DAY_OF_YEAR, times!!["currentDayOfYear"]!!)
+                set(Calendar.HOUR_OF_DAY, times!!["currentHour"]!!)
+                set(Calendar.MINUTE, times!!["currentMinute"]!!)
+                set(Calendar.SECOND, 0)
+            }
+
+            if (intent.getBooleanExtra("setNewAlarm", false)) {
+                startAlarm(calendar)
+            }
+
+            supportFragmentManager.commit(allowStateLoss = true) {
+                replace(R.id.frame_content, newHomeInstance(times!!))
+            }
+        }
+        else {
+            val setInitialIntent = Intent(this, ActivitySetInitial::class.java)
+            startActivity(setInitialIntent)
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun loadData() : HashMap<String, Int>? {
         val sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
@@ -196,7 +213,8 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
         val alarm = DB?.getLatestTimeSet() ?: return null
 
-        return hashMapOf("currentHour" to alarm!!.TimeSet.hour, "currentMinute" to alarm.TimeSet.minute,
+        return hashMapOf("currentDayOfYear" to alarm.TimeSet.dayOfYear,
+            "currentHour" to alarm.TimeSet.hour, "currentMinute" to alarm.TimeSet.minute,
             "goalHour" to sp.getInt("goalHour", 0), "goalMinute" to sp.getInt("goalMinute", 0))
         //return hashMapOf("currentHour" to 12, "currentMinute" to 12, "goalHour" to 12, "goalMinute" to 12)
     }
