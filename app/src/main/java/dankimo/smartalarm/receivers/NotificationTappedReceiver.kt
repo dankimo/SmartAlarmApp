@@ -40,9 +40,11 @@ class NotificationTappedReceiver : BroadcastReceiver() {
                 if (newMinute < goalMinute && alarm.TimeStopped!!.hour == goalHour) {
                     newMinute = goalMinute;
                     val diff = alarm.TimeSet.minute - goalMinute
-                    DB?.addAlarm(Alarm(null, alarm.TimeSet.minusMinutes(diff as Long), null))
+                    DB?.addAlarm(Alarm(null, alarm.TimeSet.minusMinutes(diff.toLong()), null))
                 }
-                DB?.addAlarm(Alarm(null, alarm.TimeSet.minusMinutes(5), null))
+                else {
+                    DB?.addAlarm(Alarm(null, alarm.TimeSet.minusMinutes(5), null))
+                }
                 context.sendBroadcast( Intent("UPDATE_ALARM"))
             }
             else {

@@ -18,7 +18,6 @@ class NotificationReceiver : BroadcastReceiver() {
         val builder = NotificationCompat.Builder(context!!, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm)
             .setContentTitle("SmartAlarm")
-            .setAutoCancel(true)
             .setContentText("Are you awake? Tap to record a successful wake-up.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(notificationTappedIntent)

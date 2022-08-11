@@ -25,7 +25,6 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentTitle("SmartAlarm")
             .setContentText("Tap to turn off alarm.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)
             .setContentIntent(stopAlarmIntent)
 
