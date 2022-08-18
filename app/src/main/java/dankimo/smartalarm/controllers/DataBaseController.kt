@@ -53,10 +53,10 @@ class DataBaseController (
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getAllAlarms(tableName : String) : List<Alarm> {
+    fun getAllAlarms() : List<Alarm> {
         val returnList: MutableList<Alarm> = mutableListOf()
 
-        val query = "SELECT * FROM $tableName"
+        val query = "SELECT * FROM $ALARM_TABLE_NAME"
 
         val cursor: Cursor = writeableDB.rawQuery(query, null)
 
@@ -66,7 +66,7 @@ class DataBaseController (
                 val timeSet = convertFromStringToDate(cursor.getString(1))
                 val timeStopped = convertFromStringToDate(cursor.getString(2))
 
-                val alarm = Alarm(alarmID, timeSet, timeStopped)
+                val alarm = Alarm(alarmID, timeSet!!, timeStopped)
                 returnList.add(alarm)
 
             } while (cursor.moveToNext())
@@ -87,7 +87,7 @@ class DataBaseController (
             val id = cursor.getInt(0)
             val timeSet = convertFromStringToDate(cursor.getString(1))
             val timeStopped = convertFromStringToDate(cursor.getString(2))
-            alarm = Alarm(id, timeSet, timeStopped)
+            alarm = Alarm(id, timeSet!!, timeStopped)
         }
 
         cursor.close()
@@ -113,7 +113,7 @@ class DataBaseController (
                 }
             }
 
-            alarm = Alarm(id, timeSet, timeStopped)
+            alarm = Alarm(id, timeSet!!, timeStopped)
         }
 
         cursor.close()
@@ -142,8 +142,12 @@ class DataBaseController (
 
     companion object {
         @RequiresApi(Build.VERSION_CODES.O)
-        fun convertFromStringToDate(date : String) : LocalDateTime {
-            return LocalDateTime.parse(date, dateFormatter)
+        fun convertFromStringToDate(date : String) : LocalDateTime? {
+            return try {
+                LocalDateTime.parse(date, dateFormatter)
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 }
