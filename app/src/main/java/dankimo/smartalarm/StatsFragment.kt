@@ -11,8 +11,9 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LimitLine
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -21,7 +22,6 @@ import dankimo.smartalarm.databinding.FragmentStatsBinding
 import dankimo.smartalarm.models.Alarm
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 
 class StatsFragment : Fragment() {
     private lateinit var binding: FragmentStatsBinding
@@ -50,17 +50,13 @@ class StatsFragment : Fragment() {
 
         val chart = binding.chart
         val lineData = LineData()
+        chart.data = lineData
+        chart.xAxis.valueFormatter = ChartValueFormatter()
+
         lineData.addDataSet(timesSetDataSet)
         lineData.addDataSet(timesStoppedDataSet)
 
-        chart.data = lineData
-        chart.setDrawGridBackground(false)
-        chart.description.text = ""
-        chart.xAxis.setDrawGridLines(false)
-        chart.axisRight.setDrawGridLines(false);
-        chart.axisLeft.setDrawGridLines(false);
-        chart.axisRight.setLabelCount(0,true)
-        chart.axisLeft.addLimitLine(createGoalTimeLimit())
+        setupChart(chart)
 
         return binding.root
     }
@@ -141,5 +137,17 @@ class StatsFragment : Fragment() {
         val minute = date.minute
 
         return (hour + minute).toFloat()
+    }
+
+    private fun setupChart(chart: LineChart) {
+        chart.setDrawGridBackground(false)
+        chart.description.text = ""
+        chart.xAxis.setDrawGridLines(false)
+        chart.axisRight.setDrawGridLines(false);
+        chart.axisLeft.setDrawGridLines(false);
+        chart.axisRight.setLabelCount(0,true)
+        chart.axisLeft.addLimitLine(createGoalTimeLimit())
+        chart.xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        chart.xAxis.labelCount = 5;
     }
 }

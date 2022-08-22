@@ -9,8 +9,10 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import androidx.annotation.RequiresApi
 import dankimo.smartalarm.models.Alarm
-import dankimo.smartalarm.models.dateFormatter
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 
 
 val ALARM_TABLE_NAME = "AlarmTimes"
@@ -141,10 +143,37 @@ class DataBaseController (
     }
 
     companion object {
+        val dateStringPattern = "yyyy-MM-dd HH:mm:ss"
+        val dateFormatter : DateTimeFormatter =
+            DateTimeFormatterBuilder().appendPattern(dateStringPattern)
+                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                .parseDefaulting(ChronoField.MICRO_OF_SECOND, 0)
+                .parseDefaulting(ChronoField.MILLI_OF_SECOND, 0)
+                .parseDefaulting(ChronoField.NANO_OF_SECOND, 0)
+                .toFormatter()
+
+        val chartStringPattern = "MM-dd"
+        val chartDateFormatter : DateTimeFormatter =
+            DateTimeFormatterBuilder().appendPattern(chartStringPattern)
+            .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+            .parseDefaulting(ChronoField.MICRO_OF_SECOND, 0)
+            .parseDefaulting(ChronoField.MILLI_OF_SECOND, 0)
+            .parseDefaulting(ChronoField.NANO_OF_SECOND, 0)
+            .toFormatter()
+
         @RequiresApi(Build.VERSION_CODES.O)
         fun convertFromStringToDate(date : String) : LocalDateTime? {
             return try {
                 LocalDateTime.parse(date, dateFormatter)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun convertFromDateToChartLabel(date: LocalDateTime) : String? {
+            return try {
+                return chartDateFormatter.format(date)
             } catch (e: Exception) {
                 null
             }
